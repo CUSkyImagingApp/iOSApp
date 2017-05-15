@@ -1,0 +1,25 @@
+platform :ios, '9.0'
+
+target 'CitizenSkyView' do
+  use_frameworks!
+
+  # Pods for CitizenSkyView
+
+  target 'CitizenSkyViewTests' do
+    inherit! :search_paths
+    # Pods for testing
+  end
+
+  target 'CitizenSkyViewUITests' do
+    inherit! :search_paths
+    # Pods for testing
+  end
+
+  #pods for AWS
+  pod 'AWSCognito'
+  pod 'AWSCognitoIdentityProvider'
+  pod 'AWSCore'
+  pod 'AWSDynamoDB'
+  pod 'AWSS3'
+
+end
