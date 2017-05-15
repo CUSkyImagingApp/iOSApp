@@ -242,6 +242,7 @@
 				TargetAttributes = {
 					3FB1C66D1ECA054B008B5C92 = {
 						CreatedOnToolsVersion = 8.3.2;
+						DevelopmentTeam = G8P9ZKFQKC;
 						ProvisioningStyle = Automatic;
 					};
 					3FB1C6811ECA054B008B5C92 = {
@@ -602,6 +603,7 @@
 			baseConfigurationReference = EA0EC6BFD1242ED29EB1C48E /* Pods-CitizenSkyView.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = G8P9ZKFQKC;
 				INFOPLIST_FILE = CitizenSkyView/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = CET.CitizenSkyView;
@@ -615,6 +617,7 @@
 			baseConfigurationReference = B7842480048AD0FD5874A9E0 /* Pods-CitizenSkyView.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = G8P9ZKFQKC;
 				INFOPLIST_FILE = CitizenSkyView/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = CET.CitizenSkyView;
@@ -700,6 +703,7 @@
 				3FB1C6981ECA054B008B5C92 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		3FB1C6991ECA054B008B5C92 /* Build configuration list for PBXNativeTarget "CitizenSkyViewTests" */ = {
 			isa = XCConfigurationList;
@@ -708,6 +712,7 @@
 				3FB1C69B1ECA054B008B5C92 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		3FB1C69C1ECA054B008B5C92 /* Build configuration list for PBXNativeTarget "CitizenSkyViewUITests" */ = {
 			isa = XCConfigurationList;
@@ -716,6 +721,7 @@
 				3FB1C69E1ECA054B008B5C92 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
