@@ -18,6 +18,7 @@ class ViewController: UIViewController {
     //MARK: Properties
     let captureSession = AVCaptureSession()
     var capturePhotoOutput = AVCapturePhotoOutput()
+    var isCaptureSessionConfigured = false
 
 
     override func viewDidLoad() {
@@ -139,6 +140,7 @@ class ViewController: UIViewController {
         
         success = true
     }
+
 
 }
 
