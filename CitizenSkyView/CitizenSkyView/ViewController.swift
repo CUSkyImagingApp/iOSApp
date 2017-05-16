@@ -32,25 +32,95 @@ class ViewController: UIViewController {
     }
     
     //MARK: Actions
-    
     @IBAction func takePicture(_ sender: UIButton){
         let credentialsProvider = AWSCognitoCredentialsProvider(regionType:.USWest2,
                                                                 identityPoolId:"us-west-2:43473766-619f-4209-996b-7dc61e65ccf1")
         let configuration = AWSServiceConfiguration(region:.USWest2, credentialsProvider:credentialsProvider)
         AWSServiceManager.default().defaultServiceConfiguration = configuration
         
+
+        let cameraDevice = AVCaptureDevice.defaultDevice(withDeviceType: .builtInWideAngleCamera, mediaType: AVMediaTypeVideo, position: .back)
+
         
-        //Check to see if we have camera permission
-        self.checkCameraAuthorization { authorized in
-            if authorized {
-                // Proceed to set up and use the camera.
-                
-                
-            } else {
-                print("Permission to use camera denied.")
-                return
+        var possibleCameraInput : AVCaptureInput?
+        do {
+            possibleCameraInput = try AVCaptureDeviceInput(device:cameraDevice)
+        } catch {
+            print("Error setting up capture device input")
+        }
+        
+        if let backCameraInput = possibleCameraInput as? AVCaptureDeviceInput {
+            if self.captureSession.canAddInput(backCameraInput) {
+                self.captureSession.addInput(backCameraInput)
             }
         }
+        
+        let authorizationStatus = AVCaptureDevice.authorizationStatus(forMediaType: AVMediaTypeVideo)
+        switch authorizationStatus {
+        case .notDetermined:
+            // permission dialog not yet presented, request authorization
+            AVCaptureDevice.requestAccess(forMediaType: AVMediaTypeVideo,
+                                                      completionHandler: { (granted:Bool) -> Void in
+                                                        if granted {
+                                                            // go ahead
+                                                        }
+                                                        else {
+                                                            // user denied, nothing much to do
+                                                            print("User denied camera access")
+                                                            return
+                                                        }
+            })
+        case .authorized:
+            // go ahead
+            
+            break
+        case .denied, .restricted:
+            print("Denied or restricted access")
+            return
+            // the user explicitly denied camera usage or is not allowed to access the camera devices
+        }
+        
+        let previewLayer = AVCaptureVideoPreviewLayer(session: self.captureSession)
+        previewLayer?.frame = view.bounds
+        view.layer.addSublayer(previewLayer!)
+        
+
+        if self.captureSession.canAddOutput(self.capturePhotoOutput) {
+            self.captureSession.addOutput(self.capturePhotoOutput)
+        }
+        
+
+            
+        let connection = self.capturePhotoOutput.connection(withMediaType: AVMediaTypeVideo)
+        
+        // update the video orientation to the device one
+        connection?.videoOrientation = AVCaptureVideoOrientation(rawValue: UIDevice.current.orientation.rawValue)!
+        
+        self.capturePhotoOutput.captureStillImageAsynchronouslyFromConnection(connection) {
+            (imageDataSampleBuffer, error) -> Void in
+            
+            if error == nil {
+                
+                // if the session preset .Photo is used, or if explicitly set in the device's outputSettings
+                // we get the data already compressed as JPEG
+                
+                let imageData = AVCaptureStillImageOutput.jpegStillImageNSDataRepresentation(imageDataSampleBuffer)
+                
+                // the sample buffer also contains the metadata, in case we want to modify it
+                let metadata:NSDictionary = CMCopyDictionaryOfAttachments(nil, imageDataSampleBuffer, CMAttachmentMode(kCMAttachmentMode_ShouldPropagate)).takeUnretainedValue()
+                
+                if let image = UIImage(data: imageData) {
+                    // save the image or do something interesting with it
+                    ...
+                }
+            }
+            else {
+                NSLog("error while capturing still image: \(error)")
+            }
+        }
+
+        
+        
         
         let transferManager = AWSS3TransferManager.default()
         let uploadRequest = AWSS3TransferManagerUploadRequest()
