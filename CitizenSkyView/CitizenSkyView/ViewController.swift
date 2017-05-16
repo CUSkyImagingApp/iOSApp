@@ -12,18 +12,57 @@ import AWSCognito
 import AWSS3
 import AVFoundation
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, AVCapturePhotoCaptureDelegate {
     
     
     //MARK: Properties
-    let captureSession = AVCaptureSession()
-    var capturePhotoOutput = AVCapturePhotoOutput()
-    var isCaptureSessionConfigured = false
+    var captureSesssion : AVCaptureSession!
+    var cameraOutput : AVCapturePhotoOutput!
+    var previewLayer : AVCaptureVideoPreviewLayer!
+    
+    var credentialProvider : AWSCognitoCredentialsProvider!
+    var configuration : AWSServiceConfiguration!
+    var transferManager : AWSS3TransferManager!
+    
+    @IBOutlet weak var capturedImage: UIImageView!
+    @IBOutlet weak var previewView: UIView!
+
 
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        credentialProvider = AWSCognitoCredentialsProvider(regionType:.USWest2,
+                                                            identityPoolId:"us-west-2:43473766-619f-4209-996b-7dc61e65ccf1")
+        configuration = AWSServiceConfiguration(region:.USWest2, credentialsProvider:credentialProvider)
+        AWSServiceManager.default().defaultServiceConfiguration = configuration
+        transferManager = AWSS3TransferManager.default()
+        
+        captureSesssion = AVCaptureSession()
+        captureSesssion.sessionPreset = AVCaptureSessionPresetPhoto
+        cameraOutput = AVCapturePhotoOutput()
+        
+        let device = AVCaptureDevice.defaultDevice(withMediaType: AVMediaTypeVideo)
+        
+        if let input = try? AVCaptureDeviceInput(device: device) {
+            if (captureSesssion.canAddInput(input)) {
+                captureSesssion.addInput(input)
+                if (captureSesssion.canAddOutput(cameraOutput)) {
+                    
+                    captureSesssion.addOutput(cameraOutput)
+                    previewLayer = AVCaptureVideoPreviewLayer(session: captureSesssion)
+                    print(previewView)
+                    previewLayer.frame = previewView.bounds
+                    
+                    previewView.layer.addSublayer(previewLayer)
+                    
+                    captureSesssion.startRunning()
+                }
+            } else {
+                print("issue here : captureSesssion.canAddInput")
+            }
+        } else {
+            print("some problem here")
+        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -33,183 +72,111 @@ class ViewController: UIViewController {
     
     //MARK: Actions
     @IBAction func takePicture(_ sender: UIButton){
-        let credentialsProvider = AWSCognitoCredentialsProvider(regionType:.USWest2,
-                                                                identityPoolId:"us-west-2:43473766-619f-4209-996b-7dc61e65ccf1")
-        let configuration = AWSServiceConfiguration(region:.USWest2, credentialsProvider:credentialsProvider)
-        AWSServiceManager.default().defaultServiceConfiguration = configuration
+        let settings = AVCapturePhotoSettings()
+        let previewPixelType = settings.availablePreviewPhotoPixelFormatTypes.first!
+        let previewFormat = [
+            kCVPixelBufferPixelFormatTypeKey as String: previewPixelType,
+            kCVPixelBufferWidthKey as String: 160,
+            kCVPixelBufferHeightKey as String: 160
+        ]
+        settings.previewPhotoFormat = previewFormat
+        cameraOutput.capturePhoto(with: settings, delegate: self)
         
-
-        let cameraDevice = AVCaptureDevice.defaultDevice(withDeviceType: .builtInWideAngleCamera, mediaType: AVMediaTypeVideo, position: .back)
-
-        
-        var possibleCameraInput : AVCaptureInput?
-        do {
-            possibleCameraInput = try AVCaptureDeviceInput(device:cameraDevice)
-        } catch {
-            print("Error setting up capture device input")
-        }
-        
-        if let backCameraInput = possibleCameraInput as? AVCaptureDeviceInput {
-            if self.captureSession.canAddInput(backCameraInput) {
-                self.captureSession.addInput(backCameraInput)
-            }
-        }
-        
-        let authorizationStatus = AVCaptureDevice.authorizationStatus(forMediaType: AVMediaTypeVideo)
-        switch authorizationStatus {
-        case .notDetermined:
-            // permission dialog not yet presented, request authorization
-            AVCaptureDevice.requestAccess(forMediaType: AVMediaTypeVideo,
-                                                      completionHandler: { (granted:Bool) -> Void in
-                                                        if granted {
-                                                            // go ahead
-                                                        }
-                                                        else {
-                                                            // user denied, nothing much to do
-                                                            print("User denied camera access")
-                                                            return
-                                                        }
-            })
-        case .authorized:
-            // go ahead
-            
-            break
-        case .denied, .restricted:
-            print("Denied or restricted access")
-            return
-            // the user explicitly denied camera usage or is not allowed to access the camera devices
-        }
-        
-        let previewLayer = AVCaptureVideoPreviewLayer(session: self.captureSession)
-        previewLayer?.frame = view.bounds
-        view.layer.addSublayer(previewLayer!)
-        
-
-        if self.captureSession.canAddOutput(self.capturePhotoOutput) {
-            self.captureSession.addOutput(self.capturePhotoOutput)
-        }
-        
-
-            
-        let connection = self.capturePhotoOutput.connection(withMediaType: AVMediaTypeVideo)
-        
-        // update the video orientation to the device one
-        connection?.videoOrientation = AVCaptureVideoOrientation(rawValue: UIDevice.current.orientation.rawValue)!
-        
-        self.capturePhotoOutput.captureStillImageAsynchronouslyFromConnection(connection) {
-            (imageDataSampleBuffer, error) -> Void in
-            
-            if error == nil {
-                
-                // if the session preset .Photo is used, or if explicitly set in the device's outputSettings
-                // we get the data already compressed as JPEG
-                
-                let imageData = AVCaptureStillImageOutput.jpegStillImageNSDataRepresentation(imageDataSampleBuffer)
-                
-                // the sample buffer also contains the metadata, in case we want to modify it
-                let metadata:NSDictionary = CMCopyDictionaryOfAttachments(nil, imageDataSampleBuffer, CMAttachmentMode(kCMAttachmentMode_ShouldPropagate)).takeUnretainedValue()
-                
-                if let image = UIImage(data: imageData) {
-                    // save the image or do something interesting with it
-                    ...
-                }
-            }
-            else {
-                NSLog("error while capturing still image: \(error)")
-            }
-        }
-
-        
-        
-        
-        let transferManager = AWSS3TransferManager.default()
-        let uploadRequest = AWSS3TransferManagerUploadRequest()
-        uploadRequest?.bucket = "cu-sky-imager"
-        uploadRequest?.key = "test-ios-image"
-        //uploadRequest.body = uploadingfileurl
-        //uploadRequest.contentLength = fileSize
-        
-        transferManager.upload(uploadRequest!).continueWith(executor: AWSExecutor.mainThread(), block: { (task:AWSTask<AnyObject>) -> Any? in
-            print("Uploaded")
-        })
         
     }
     
-    
-    
-    func checkCameraAuthorization(_ completionHandler: @escaping ((_ authorized: Bool) -> Void)) {
-        switch AVCaptureDevice.authorizationStatus(forMediaType: AVMediaTypeVideo) {
-        case .authorized:
-            //The user has previously granted access to the camera.
-            completionHandler(true)
+    // callBack from take picture
+    func capture(_ captureOutput: AVCapturePhotoOutput, didFinishProcessingPhotoSampleBuffer photoSampleBuffer: CMSampleBuffer?, previewPhotoSampleBuffer: CMSampleBuffer?, resolvedSettings: AVCaptureResolvedPhotoSettings, bracketSettings: AVCaptureBracketedStillImageSettings?, error: Error?) {
+        
+        if let error = error {
+            print("error occure : \(error.localizedDescription)")
+        }
+        
+        if  let sampleBuffer = photoSampleBuffer,
+            let previewBuffer = previewPhotoSampleBuffer,
+            let dataImage =  AVCapturePhotoOutput.jpegPhotoDataRepresentation(forJPEGSampleBuffer:  sampleBuffer, previewPhotoSampleBuffer: previewBuffer) {
+            print(UIImage(data: dataImage)?.size as Any)
             
-        case .notDetermined:
-            // The user has not yet been presented with the option to grant video access so request access.
-            AVCaptureDevice.requestAccess(forMediaType: AVMediaTypeVideo, completionHandler: { success in
-                completionHandler(success)
+            let dataProvider = CGDataProvider(data: dataImage as CFData)
+            let cgImageRef: CGImage! = CGImage(jpegDataProviderSource: dataProvider!, decode: nil, shouldInterpolate: true, intent: .defaultIntent)
+            let image = UIImage(cgImage: cgImageRef, scale: 1.0, orientation: UIImageOrientation.right)
+            
+            self.capturedImage.image = image
+            
+            var fileName : URL
+            if let data = UIImageJPEGRepresentation(image, 0.8) {
+                fileName = getDocumentsDirectory().appendingPathComponent("copy.png")
+                try? data.write(to: fileName)
+            } else {
+                print("could not convert image data to jpg")
+                return
+            }
+            
+
+            
+            let uploadRequest = AWSS3TransferManagerUploadRequest()
+            uploadRequest?.bucket = "cu-sky-imager"
+            uploadRequest?.key = "test-ios-image"
+            uploadRequest?.body = fileName
+            
+            transferManager.upload(uploadRequest!).continueWith(executor: AWSExecutor.mainThread(), block: { (task:AWSTask<AnyObject>) -> Any? in
+                print("Uploaded")
             })
-            
+        } else {
+            print("some error here")
+        }
+    }
+    
+    // This method you can use somewhere you need to know camera permission   state
+    func askPermission() {
+        let cameraPermissionStatus =  AVCaptureDevice.authorizationStatus(forMediaType: AVMediaTypeVideo)
+        
+        switch cameraPermissionStatus {
+        case .authorized:
+            print("Already Authorized")
         case .denied:
-            // The user has previously denied access.
-            completionHandler(false)
+            print("denied")
+            
+            let alert = UIAlertController(title: "Sorry :(" , message: "But  could you please grant permission for camera within device settings",  preferredStyle: .alert)
+            let action = UIAlertAction(title: "Ok", style: .cancel,  handler: nil)
+            alert.addAction(action)
+            present(alert, animated: true, completion: nil)
             
         case .restricted:
-            // The user doesn't have the authority to request access e.g. parental restriction.
-            completionHandler(false)
+            print("restricted")
+        default:
+            AVCaptureDevice.requestAccess(forMediaType: AVMediaTypeVideo, completionHandler: {
+                [weak self]
+                (granted :Bool) -> Void in
+                
+                if granted == true {
+                    // User granted
+                    print("User granted")
+                    DispatchQueue.main.async(){
+                        //Do smth that you need in main thread
+                    }
+                }
+                else {
+                    // User Rejected
+                    print("User Rejected")
+                    
+                    DispatchQueue.main.async(){
+                        let alert = UIAlertController(title: "WHY?" , message:  "Camera it is the main feature of our application", preferredStyle: .alert)
+                        let action = UIAlertAction(title: "Ok", style: .cancel, handler: nil)
+                        alert.addAction(action)
+                        self?.present(alert, animated: true, completion: nil)  
+                    } 
+                }
+            });
         }
     }
     
-    
-    
-    
-    func defaultDevice() -> AVCaptureDevice {
-        if let device = AVCaptureDevice.defaultDevice(withDeviceType: .builtInDualCamera,
-                                                      mediaType: AVMediaTypeVideo,
-                                                      position: .back) {
-            return device // use dual camera on supported devices
-        } else if let device = AVCaptureDevice.defaultDevice(withDeviceType: .builtInWideAngleCamera,
-                                                             mediaType: AVMediaTypeVideo,
-                                                             position: .back) {
-            return device // use default back facing camera otherwise
-        } else {
-            fatalError("All supported devices are expected to have at least one of the queried capture devices.")
-        }
+    func getDocumentsDirectory() -> URL {
+        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        let documentsDirectory = paths[0]
+        return documentsDirectory
     }
-    
-    
-    
-    
-    func configureCaptureSession(_ completionHandler: ((_ success: Bool) -> Void)) {
-        var success = false
-        defer { completionHandler(success) } // Ensure all exit paths call completion handler.
-        
-        // Get video input for the default camera.
-        let videoCaptureDevice = defaultDevice()
-        guard let videoInput = try? AVCaptureDeviceInput(device: videoCaptureDevice) else {
-            print("Unable to obtain video input for default camera.")
-            return
-        }
-        
-        // Create and configure the photo output.
-        let capturePhotoOutput = AVCapturePhotoOutput()
-        capturePhotoOutput.isHighResolutionCaptureEnabled = true
-        capturePhotoOutput.isLivePhotoCaptureEnabled = capturePhotoOutput.isLivePhotoCaptureSupported
-        
-        // Make sure inputs and output can be added to session.
-        guard self.captureSession.canAddInput(videoInput) else { return }
-        guard self.captureSession.canAddOutput(capturePhotoOutput) else { return }
-        
-        // Configure the session.
-        self.captureSession.beginConfiguration()
-        self.captureSession.sessionPreset = AVCaptureSessionPresetPhoto
-        self.captureSession.addInput(videoInput)
-        self.captureSession.addOutput(capturePhotoOutput)
-        self.captureSession.commitConfiguration()
-        
-        self.capturePhotoOutput = capturePhotoOutput
-        
-        success = true
-    }
+
 
 
 }
