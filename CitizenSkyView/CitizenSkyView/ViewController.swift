@@ -11,6 +11,7 @@ import AWSCore
 import AWSCognito
 import AWSS3
 import AVFoundation
+import TrueTime
 
 class ViewController: UIViewController, AVCapturePhotoCaptureDelegate {
     
@@ -36,6 +37,13 @@ class ViewController: UIViewController, AVCapturePhotoCaptureDelegate {
         configuration = AWSServiceConfiguration(region:.USWest2, credentialsProvider:credentialProvider)
         AWSServiceManager.default().defaultServiceConfiguration = configuration
         transferManager = AWSS3TransferManager.default()
+        
+        if isEventHappening() {
+            print("Event is happening")
+        } else {
+            //Wait for event to start
+        }
+        
         
         captureSesssion = AVCaptureSession()
         captureSesssion.sessionPreset = AVCaptureSessionPresetPhoto
@@ -177,7 +185,9 @@ class ViewController: UIViewController, AVCapturePhotoCaptureDelegate {
         return documentsDirectory
     }
 
-
+    func isEventHappening() -> Bool {
+        return false
+    }
 
 }
 

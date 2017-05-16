@@ -15,11 +15,15 @@ target 'CitizenSkyView' do
     # Pods for testing
   end
 
-  #pods for AWS
+  #AWS Pods
   pod 'AWSCognito'
   pod 'AWSCognitoIdentityProvider'
   pod 'AWSCore'
   pod 'AWSDynamoDB'
   pod 'AWSS3'
+  
+  
+  #Other Pods
+  pod 'TrueTime'
 
 end

@@ -8,6 +8,9 @@ PODS:
     - AWSCore (= 2.5.6)
   - AWSS3 (2.5.6):
     - AWSCore (= 2.5.6)
+  - Result (3.2.1)
+  - TrueTime (4.1.1):
+    - Result (~> 3.0)
 
 DEPENDENCIES:
   - AWSCognito
@@ -15,6 +18,7 @@ DEPENDENCIES:
   - AWSCore
   - AWSDynamoDB
   - AWSS3
+  - TrueTime
 
 SPEC CHECKSUMS:
   AWSCognito: 18edcf80780d45229371dc954c77c825c617f9c4
@@ -22,7 +26,9 @@ SPEC CHECKSUMS:
   AWSCore: 47109d026cdbc1272624caa73114fbdd2ba3ad66
   AWSDynamoDB: 3a6f0369625af96798c2169ed0ca448cf9f602b1
   AWSS3: 5ba117abcbf766c4ec405b255c51dbf8bbc588ce
+  Result: 2453a22e5c5b11c0c3a478736e82cd02f763b781
+  TrueTime: 22bd3a6c9e9ce75e62e2c1a6b39d7cf290f7b78f
 
-PODFILE CHECKSUM: 87e525e15cac9cdcdb8232c7bfe6c7f702b23b9c
+PODFILE CHECKSUM: 332dcc59a3af75b5ee52750186feb21c750a72a4
 
 COCOAPODS: 1.2.1
