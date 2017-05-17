@@ -137,7 +137,7 @@ class ViewController: UIViewController, AVCapturePhotoCaptureDelegate {
     }
     
     //MARK: Actions
-    @IBAction func takePicture(_ sender: UIButton){
+    func takePicture(_ sender: UIButton){
         let settings = AVCapturePhotoSettings()
         let previewPixelType = settings.availablePreviewPhotoPixelFormatTypes.first!
         let previewFormat = [
