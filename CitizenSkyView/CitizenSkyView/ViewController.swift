@@ -27,6 +27,8 @@ class ViewController: UIViewController, AVCapturePhotoCaptureDelegate {
     var transferManager : AWSS3TransferManager!
     var dynamoDBObjectMapper : AWSDynamoDBObjectMapper?
     
+    var trueTimeClient : TrueTimeClient?
+    
     @IBOutlet weak var capturedImage: UIImageView!
     @IBOutlet weak var previewView: UIView!
 
@@ -41,6 +43,9 @@ class ViewController: UIViewController, AVCapturePhotoCaptureDelegate {
         transferManager = AWSS3TransferManager.default()
         
         dynamoDBObjectMapper = AWSDynamoDBObjectMapper.default()
+        
+        trueTimeClient = TrueTimeClient.sharedInstance
+        trueTimeClient?.start()
         
         if isEventHappening() {
             print("Event is happening")
@@ -198,8 +203,26 @@ class ViewController: UIViewController, AVCapturePhotoCaptureDelegate {
                 print("The request failed. Error \(error)")
                 return ()
             } else if let paginatedOutput = task.result {
-                for event in paginatedOutput.items as! [Event]{
-                    print(event.EventName ?? "Unknown type")
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
+                if let now = self.trueTimeClient?.referenceTime?.now() {
+                    for event in paginatedOutput.items as! [Event]{
+                        print(event.Start!)
+                        print(event.End!)
+                        print(now)
+                        if let start = dateFormatter.date(from: event.Start!), let end = dateFormatter.date(from: event.End!){
+                            if now > start && now < end {
+                                print("The event is now!")
+                            } else {
+                                print("The event is not now")
+                            }
+                        } else {
+                            print("unable to convert start and/or end date into datetime object")
+                        }
+                        
+                    }
+                } else {
+                    print("unable to get time from truetime client")
                 }
                 return ()
             } else {
