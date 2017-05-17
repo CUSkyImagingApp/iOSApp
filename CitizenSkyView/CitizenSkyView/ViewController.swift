@@ -178,16 +178,23 @@ class ViewController: UIViewController, AVCapturePhotoCaptureDelegate {
                 return
             }
             
-
-            
-            let uploadRequest = AWSS3TransferManagerUploadRequest()
-            uploadRequest?.bucket = "cu-sky-imager"
-            uploadRequest?.key = "test-ios-image"
-            uploadRequest?.body = fileName
-            
-            transferManager.upload(uploadRequest!).continueWith(executor: AWSExecutor.mainThread(), block: { (task:AWSTask<AnyObject>) -> Any? in
-                print("Uploaded")
-            })
+            if let date = self.trueTimeClient?.referenceTime?.now(){
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "ss:mm:hh'T'dd-MM-yyyy"
+                dateFormatter.timeZone = TimeZone(abbreviation: "UTC")
+                let dateString = dateFormatter.string(from: date)
+                
+                let uploadRequest = AWSS3TransferManagerUploadRequest()
+                uploadRequest?.bucket = "cu-sky-imager"
+                uploadRequest?.key = dateString
+                uploadRequest?.body = fileName
+                
+                transferManager.upload(uploadRequest!).continueWith(executor: AWSExecutor.mainThread(), block: { (task:AWSTask<AnyObject>) -> Any? in
+                    print("Uploaded")
+                })
+            } else {
+                print("Unable to get time from TrueTime client. Could not upload image")
+            }
         } else {
             print("some error here")
         }
