@@ -14,6 +14,7 @@
 		3FB1C67C1ECA054B008B5C92 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3FB1C67A1ECA054B008B5C92 /* LaunchScreen.storyboard */; };
 		3FB1C6871ECA054B008B5C92 /* CitizenSkyViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FB1C6861ECA054B008B5C92 /* CitizenSkyViewTests.swift */; };
 		3FB1C6921ECA054B008B5C92 /* CitizenSkyViewUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FB1C6911ECA054B008B5C92 /* CitizenSkyViewUITests.swift */; };
+		3FD7A7761ECCAA580074DD99 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD7A7751ECCAA580074DD99 /* Event.swift */; };
 		6450C231DC05C7CA1FF34A6A /* Pods_CitizenSkyViewTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD0CEE6E51B451F5BA7FC345 /* Pods_CitizenSkyViewTests.framework */; };
 		729001175A25330CA6920E7E /* Pods_CitizenSkyViewUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C148ED2AD39A59B52A39D2A /* Pods_CitizenSkyViewUITests.framework */; };
 		77138299B88379DEF2BAB43E /* Pods_CitizenSkyView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CDC52DA689257D17E081018 /* Pods_CitizenSkyView.framework */; };
@@ -53,6 +54,7 @@
 		3FB1C68D1ECA054B008B5C92 /* CitizenSkyViewUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CitizenSkyViewUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3FB1C6911ECA054B008B5C92 /* CitizenSkyViewUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CitizenSkyViewUITests.swift; sourceTree = "<group>"; };
 		3FB1C6931ECA054B008B5C92 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		3FD7A7751ECCAA580074DD99 /* Event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Event.swift; path = CitizenSkyView/Models/Event.swift; sourceTree = "<group>"; };
 		4CDC52DA689257D17E081018 /* Pods_CitizenSkyView.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CitizenSkyView.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		79B3309A994AF913712F861F /* Pods-CitizenSkyViewTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CitizenSkyViewTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-CitizenSkyViewTests/Pods-CitizenSkyViewTests.debug.xcconfig"; sourceTree = "<group>"; };
 		B7842480048AD0FD5874A9E0 /* Pods-CitizenSkyView.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CitizenSkyView.release.xcconfig"; path = "Pods/Target Support Files/Pods-CitizenSkyView/Pods-CitizenSkyView.release.xcconfig"; sourceTree = "<group>"; };
@@ -117,6 +119,7 @@
 				3FB1C6711ECA054B008B5C92 /* AppDelegate.swift */,
 				3FB1C6731ECA054B008B5C92 /* ViewController.swift */,
 				3FB1C6751ECA054B008B5C92 /* Main.storyboard */,
+				3FBA8FA51ECCA97700930C02 /* Models */,
 				3FB1C6781ECA054B008B5C92 /* Assets.xcassets */,
 				3FB1C67A1ECA054B008B5C92 /* LaunchScreen.storyboard */,
 				3FB1C67D1ECA054B008B5C92 /* Info.plist */,
@@ -140,6 +143,15 @@
 				3FB1C6931ECA054B008B5C92 /* Info.plist */,
 			);
 			path = CitizenSkyViewUITests;
+			sourceTree = "<group>";
+		};
+		3FBA8FA51ECCA97700930C02 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				3FD7A7751ECCAA580074DD99 /* Event.swift */,
+			);
+			name = Models;
+			path = ..;
 			sourceTree = "<group>";
 		};
 		B36877A74CD67A76B806DF7E /* Frameworks */ = {
@@ -448,6 +460,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3FB1C6741ECA054B008B5C92 /* ViewController.swift in Sources */,
+				3FD7A7761ECCAA580074DD99 /* Event.swift in Sources */,
 				3FB1C6721ECA054B008B5C92 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

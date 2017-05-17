@@ -10,6 +10,7 @@ import UIKit
 import AWSCore
 import AWSCognito
 import AWSS3
+import AWSDynamoDB
 import AVFoundation
 import TrueTime
 
@@ -24,6 +25,7 @@ class ViewController: UIViewController, AVCapturePhotoCaptureDelegate {
     var credentialProvider : AWSCognitoCredentialsProvider!
     var configuration : AWSServiceConfiguration!
     var transferManager : AWSS3TransferManager!
+    var dynamoDBObjectMapper : AWSDynamoDBObjectMapper?
     
     @IBOutlet weak var capturedImage: UIImageView!
     @IBOutlet weak var previewView: UIView!
@@ -37,6 +39,8 @@ class ViewController: UIViewController, AVCapturePhotoCaptureDelegate {
         configuration = AWSServiceConfiguration(region:.USWest2, credentialsProvider:credentialProvider)
         AWSServiceManager.default().defaultServiceConfiguration = configuration
         transferManager = AWSS3TransferManager.default()
+        
+        dynamoDBObjectMapper = AWSDynamoDBObjectMapper.default()
         
         if isEventHappening() {
             print("Event is happening")
@@ -186,6 +190,24 @@ class ViewController: UIViewController, AVCapturePhotoCaptureDelegate {
     }
 
     func isEventHappening() -> Bool {
+        let scanExpression = AWSDynamoDBScanExpression()
+        scanExpression.limit = 20
+        
+        dynamoDBObjectMapper?.scan(Event.self, expression: scanExpression).continueWith(block: {(task:AWSTask<AWSDynamoDBPaginatedOutput>) -> Any? in
+            if let error = task.error as NSError? {
+                print("The request failed. Error \(error)")
+                return ()
+            } else if let paginatedOutput = task.result {
+                for event in paginatedOutput.items as! [Event]{
+                    print(event.EventName ?? "Unknown type")
+                }
+                return ()
+            } else {
+                print("There was no error, but the response was empty")
+                return ()
+            }
+        })
+        
         return false
     }
 

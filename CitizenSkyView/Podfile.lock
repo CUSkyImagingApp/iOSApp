@@ -16,7 +16,7 @@ DEPENDENCIES:
   - AWSCognito
   - AWSCognitoIdentityProvider
   - AWSCore
-  - AWSDynamoDB
+  - AWSDynamoDB (~> 2.5.0)
   - AWSS3
   - TrueTime
 
@@ -29,6 +29,6 @@ SPEC CHECKSUMS:
   Result: 2453a22e5c5b11c0c3a478736e82cd02f763b781
   TrueTime: 22bd3a6c9e9ce75e62e2c1a6b39d7cf290f7b78f
 
-PODFILE CHECKSUM: 332dcc59a3af75b5ee52750186feb21c750a72a4
+PODFILE CHECKSUM: cb0ab6235a03638315dc2aa1b5416b2f47245087
 
 COCOAPODS: 1.2.1

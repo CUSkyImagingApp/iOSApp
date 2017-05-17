@@ -19,7 +19,7 @@ target 'CitizenSkyView' do
   pod 'AWSCognito'
   pod 'AWSCognitoIdentityProvider'
   pod 'AWSCore'
-  pod 'AWSDynamoDB'
+  pod 'AWSDynamoDB','~>2.5.0'
   pod 'AWSS3'
   
   
