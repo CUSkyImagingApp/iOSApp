@@ -31,11 +31,16 @@ class ViewController: UIViewController, AVCapturePhotoCaptureDelegate {
     
     @IBOutlet weak var capturedImage: UIImageView!
     @IBOutlet weak var previewView: UIView!
+    @IBOutlet weak var eventSpinner: UIActivityIndicatorView!
 
 
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        previewView.isHidden = true
+        capturedImage.isHidden = true
+        eventSpinner.startAnimating()
+        eventSpinner.hidesWhenStopped = true
         credentialProvider = AWSCognitoCredentialsProvider(regionType:.USWest2,
                                                             identityPoolId:"us-west-2:43473766-619f-4209-996b-7dc61e65ccf1")
         configuration = AWSServiceConfiguration(region:.USWest2, credentialsProvider:credentialProvider)
@@ -47,11 +52,55 @@ class ViewController: UIViewController, AVCapturePhotoCaptureDelegate {
         trueTimeClient = TrueTimeClient.sharedInstance
         trueTimeClient?.start()
         
-        if isEventHappening() {
-            print("Event is happening")
-        } else {
-            //Wait for event to start
-        }
+
+        
+        let scanExpression = AWSDynamoDBScanExpression()
+        scanExpression.limit = 20
+        
+        dynamoDBObjectMapper?.scan(Event.self, expression: scanExpression).continueWith(block: {(task:AWSTask<AWSDynamoDBPaginatedOutput>) -> Any? in
+            if let error = task.error as NSError? {
+                print("The request failed. Error \(error)")
+                return ()
+            } else if let paginatedOutput = task.result {
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
+                self.trueTimeClient?.fetchIfNeeded { result in
+                    switch result {
+                    case let .success(referenceTime):
+                        let now = referenceTime.now()
+                        for event in paginatedOutput.items as! [Event]{
+                            print(event.Start!)
+                            print(event.End!)
+                            print(now)
+                            if let start = dateFormatter.date(from: event.Start!), let end = dateFormatter.date(from: event.End!){
+                                if now > start && now < end {
+                                    print("The event is now!")
+                                    self.eventSpinner.stopAnimating()
+                                    self.capturedImage.isHidden = false
+                                    self.previewView.isHidden = false
+                                    
+                                } else {
+                                    print("The event is not now")
+                                    
+                                    //TODO: Deal with multiple events in DynamoDB
+                                }
+                            } else {
+                                print("unable to convert start and/or end date into datetime object")
+                                
+                            }
+                            
+                        }
+                    case let .failure(error):
+                        print("Error! \(error)")
+                    }
+                }
+            } else {
+                print("There was no error, but the response was empty")
+
+            }
+            return ()
+        })
+
         
         
         captureSesssion = AVCaptureSession()
@@ -194,45 +243,6 @@ class ViewController: UIViewController, AVCapturePhotoCaptureDelegate {
         return documentsDirectory
     }
 
-    func isEventHappening() -> Bool {
-        let scanExpression = AWSDynamoDBScanExpression()
-        scanExpression.limit = 20
-        
-        dynamoDBObjectMapper?.scan(Event.self, expression: scanExpression).continueWith(block: {(task:AWSTask<AWSDynamoDBPaginatedOutput>) -> Any? in
-            if let error = task.error as NSError? {
-                print("The request failed. Error \(error)")
-                return ()
-            } else if let paginatedOutput = task.result {
-                let dateFormatter = DateFormatter()
-                dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
-                if let now = self.trueTimeClient?.referenceTime?.now() {
-                    for event in paginatedOutput.items as! [Event]{
-                        print(event.Start!)
-                        print(event.End!)
-                        print(now)
-                        if let start = dateFormatter.date(from: event.Start!), let end = dateFormatter.date(from: event.End!){
-                            if now > start && now < end {
-                                print("The event is now!")
-                            } else {
-                                print("The event is not now")
-                            }
-                        } else {
-                            print("unable to convert start and/or end date into datetime object")
-                        }
-                        
-                    }
-                } else {
-                    print("unable to get time from truetime client")
-                }
-                return ()
-            } else {
-                print("There was no error, but the response was empty")
-                return ()
-            }
-        })
-        
-        return false
-    }
 
 }
 
