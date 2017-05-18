@@ -30,6 +30,8 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
     var trueTimeClient : TrueTimeClient?
     var timer = Timer()
     
+    var onThirtySecondTimer = false
+    
     @IBOutlet weak var capturedImage: UIImageView!
     @IBOutlet weak var previewView: UIView!
 
@@ -64,6 +66,8 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
                     previewView.layer.addSublayer(previewLayer)
                     
                     captureSesssion.startRunning()
+                    
+                    self.onThirtySecondTimer = false
                     startThirtySecondCapture()
                 }
             } else {
@@ -82,12 +86,23 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
     }
     
     //MARK: Actions
+    //Calculate when the first 30 second interval should start
     func startThirtySecondCapture(){
-        timer = Timer.scheduledTimer(timeInterval: 30, target: self, selector: (#selector(ImageCaptureViewController.takePicture)), userInfo: nil, repeats: true)
+        if let datetime = self.trueTimeClient?.referenceTime?.now() {
+            let calendar = Calendar.current
+            let seconds = calendar.component(.second, from: datetime)
+            let offset = (30 - (seconds % 30))
+            self.timer = Timer.scheduledTimer(timeInterval: TimeInterval(offset), target: self, selector: (#selector(ImageCaptureViewController.takePicture)), userInfo: nil, repeats: false)
+        }
     }
     
     
     func takePicture(){
+        if !onThirtySecondTimer {
+            self.timer = Timer.scheduledTimer(timeInterval: 30, target: self, selector: (#selector(ImageCaptureViewController.takePicture)), userInfo: nil, repeats: true)
+            self.onThirtySecondTimer = true
+        }
+        
         let settings = AVCapturePhotoSettings()
         let previewPixelType = settings.availablePreviewPhotoPixelFormatTypes.first!
         let previewFormat = [
@@ -97,7 +112,6 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
         ]
         settings.previewPhotoFormat = previewFormat
         cameraOutput.capturePhoto(with: settings, delegate: self)
-        
         
     }
     
@@ -111,7 +125,6 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
         if  let sampleBuffer = photoSampleBuffer,
             let previewBuffer = previewPhotoSampleBuffer,
             let dataImage =  AVCapturePhotoOutput.jpegPhotoDataRepresentation(forJPEGSampleBuffer:  sampleBuffer, previewPhotoSampleBuffer: previewBuffer) {
-            print(UIImage(data: dataImage)?.size as Any)
             
             let dataProvider = CGDataProvider(data: dataImage as CFData)
             let cgImageRef: CGImage! = CGImage(jpegDataProviderSource: dataProvider!, decode: nil, shouldInterpolate: true, intent: .defaultIntent)
