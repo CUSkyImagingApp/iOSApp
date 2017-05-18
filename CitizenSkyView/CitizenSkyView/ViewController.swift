@@ -29,23 +29,22 @@ class ViewController: UIViewController, AVCapturePhotoCaptureDelegate {
     
     var trueTimeClient : TrueTimeClient?
     
-    @IBOutlet weak var capturedImage: UIImageView!
-    @IBOutlet weak var previewView: UIView!
+
     @IBOutlet weak var eventSpinner: UIActivityIndicatorView!
+    @IBOutlet weak var readyButton: UIButton!
 
 
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        previewView.isHidden = true
-        capturedImage.isHidden = true
+        readyButton.isHidden = true
         eventSpinner.startAnimating()
         eventSpinner.hidesWhenStopped = true
         credentialProvider = AWSCognitoCredentialsProvider(regionType:.USWest2,
                                                             identityPoolId:"us-west-2:43473766-619f-4209-996b-7dc61e65ccf1")
         configuration = AWSServiceConfiguration(region:.USWest2, credentialsProvider:credentialProvider)
         AWSServiceManager.default().defaultServiceConfiguration = configuration
-        transferManager = AWSS3TransferManager.default()
+
         
         dynamoDBObjectMapper = AWSDynamoDBObjectMapper.default()
         
@@ -76,8 +75,7 @@ class ViewController: UIViewController, AVCapturePhotoCaptureDelegate {
                                 if now > start && now < end {
                                     print("The event is now!")
                                     self.eventSpinner.stopAnimating()
-                                    self.capturedImage.isHidden = false
-                                    self.previewView.isHidden = false
+                                    self.readyButton.isHidden = false
                                     
                                 } else {
                                     print("The event is not now")
@@ -102,33 +100,6 @@ class ViewController: UIViewController, AVCapturePhotoCaptureDelegate {
         })
 
         
-        
-        captureSesssion = AVCaptureSession()
-        captureSesssion.sessionPreset = AVCaptureSessionPresetPhoto
-        cameraOutput = AVCapturePhotoOutput()
-        
-        let device = AVCaptureDevice.defaultDevice(withMediaType: AVMediaTypeVideo)
-        
-        if let input = try? AVCaptureDeviceInput(device: device) {
-            if (captureSesssion.canAddInput(input)) {
-                captureSesssion.addInput(input)
-                if (captureSesssion.canAddOutput(cameraOutput)) {
-                    
-                    captureSesssion.addOutput(cameraOutput)
-                    previewLayer = AVCaptureVideoPreviewLayer(session: captureSesssion)
-                    print(previewView)
-                    previewLayer.frame = previewView.bounds
-                    
-                    previewView.layer.addSublayer(previewLayer)
-                    
-                    captureSesssion.startRunning()
-                }
-            } else {
-                print("issue here : captureSesssion.canAddInput")
-            }
-        } else {
-            print("some problem here")
-        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -137,68 +108,6 @@ class ViewController: UIViewController, AVCapturePhotoCaptureDelegate {
     }
     
     //MARK: Actions
-    func takePicture(_ sender: UIButton){
-        let settings = AVCapturePhotoSettings()
-        let previewPixelType = settings.availablePreviewPhotoPixelFormatTypes.first!
-        let previewFormat = [
-            kCVPixelBufferPixelFormatTypeKey as String: previewPixelType,
-            kCVPixelBufferWidthKey as String: 160,
-            kCVPixelBufferHeightKey as String: 160
-        ]
-        settings.previewPhotoFormat = previewFormat
-        cameraOutput.capturePhoto(with: settings, delegate: self)
-        
-        
-    }
-    
-    // callBack from take picture
-    func capture(_ captureOutput: AVCapturePhotoOutput, didFinishProcessingPhotoSampleBuffer photoSampleBuffer: CMSampleBuffer?, previewPhotoSampleBuffer: CMSampleBuffer?, resolvedSettings: AVCaptureResolvedPhotoSettings, bracketSettings: AVCaptureBracketedStillImageSettings?, error: Error?) {
-        
-        if let error = error {
-            print("error occure : \(error.localizedDescription)")
-        }
-        
-        if  let sampleBuffer = photoSampleBuffer,
-            let previewBuffer = previewPhotoSampleBuffer,
-            let dataImage =  AVCapturePhotoOutput.jpegPhotoDataRepresentation(forJPEGSampleBuffer:  sampleBuffer, previewPhotoSampleBuffer: previewBuffer) {
-            print(UIImage(data: dataImage)?.size as Any)
-            
-            let dataProvider = CGDataProvider(data: dataImage as CFData)
-            let cgImageRef: CGImage! = CGImage(jpegDataProviderSource: dataProvider!, decode: nil, shouldInterpolate: true, intent: .defaultIntent)
-            let image = UIImage(cgImage: cgImageRef, scale: 1.0, orientation: UIImageOrientation.right)
-            
-            self.capturedImage.image = image
-            
-            var fileName : URL
-            if let data = UIImageJPEGRepresentation(image, 0.8) {
-                fileName = getDocumentsDirectory().appendingPathComponent("copy.png")
-                try? data.write(to: fileName)
-            } else {
-                print("could not convert image data to jpg")
-                return
-            }
-            
-            if let date = self.trueTimeClient?.referenceTime?.now(){
-                let dateFormatter = DateFormatter()
-                dateFormatter.dateFormat = "ss:mm:hh'T'dd-MM-yyyy"
-                dateFormatter.timeZone = TimeZone(abbreviation: "UTC")
-                let dateString = dateFormatter.string(from: date)
-                
-                let uploadRequest = AWSS3TransferManagerUploadRequest()
-                uploadRequest?.bucket = "cu-sky-imager"
-                uploadRequest?.key = dateString
-                uploadRequest?.body = fileName
-                
-                transferManager.upload(uploadRequest!).continueWith(executor: AWSExecutor.mainThread(), block: { (task:AWSTask<AnyObject>) -> Any? in
-                    print("Uploaded")
-                })
-            } else {
-                print("Unable to get time from TrueTime client. Could not upload image")
-            }
-        } else {
-            print("some error here")
-        }
-    }
     
     // This method you can use somewhere you need to know camera permission   state
     func askPermission() {
@@ -244,12 +153,6 @@ class ViewController: UIViewController, AVCapturePhotoCaptureDelegate {
         }
     }
     
-    func getDocumentsDirectory() -> URL {
-        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
-        let documentsDirectory = paths[0]
-        return documentsDirectory
-    }
-
 
 }
 

@@ -7,88 +7,145 @@
 //
 
 import UIKit
+import AWSCore
+import AWSCognito
+import AWSS3
+import AVFoundation
+import TrueTime
 
-private let reuseIdentifier = "Cell"
 
-class ImageCaptureViewController: UICollectionViewController {
+class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegate  {
+    
+    
+    //MARK: Properties
+    //MARK: Properties
+    var captureSesssion : AVCaptureSession!
+    var cameraOutput : AVCapturePhotoOutput!
+    var previewLayer : AVCaptureVideoPreviewLayer!
+    
+    var credentialProvider : AWSCognitoCredentialsProvider!
+    var configuration : AWSServiceConfiguration!
+    var transferManager : AWSS3TransferManager!
+    
+    var trueTimeClient : TrueTimeClient?
+    
+    @IBOutlet weak var capturedImage: UIImageView!
+    @IBOutlet weak var previewView: UIView!
+
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Register cell classes
-        self.collectionView!.register(UICollectionViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
-
-        // Do any additional setup after loading the view.
+        credentialProvider = AWSCognitoCredentialsProvider(regionType:.USWest2,
+                                                           identityPoolId:"us-west-2:43473766-619f-4209-996b-7dc61e65ccf1")
+        configuration = AWSServiceConfiguration(region:.USWest2, credentialsProvider:credentialProvider)
+        AWSServiceManager.default().defaultServiceConfiguration = configuration
+        transferManager = AWSS3TransferManager.default()
+        
+        
+        captureSesssion = AVCaptureSession()
+        captureSesssion.sessionPreset = AVCaptureSessionPresetPhoto
+        cameraOutput = AVCapturePhotoOutput()
+        
+        let device = AVCaptureDevice.defaultDevice(withMediaType: AVMediaTypeVideo)
+        
+        if let input = try? AVCaptureDeviceInput(device: device) {
+            if (captureSesssion.canAddInput(input)) {
+                captureSesssion.addInput(input)
+                if (captureSesssion.canAddOutput(cameraOutput)) {
+                    
+                    captureSesssion.addOutput(cameraOutput)
+                    previewLayer = AVCaptureVideoPreviewLayer(session: captureSesssion)
+                    print(previewView)
+                    previewLayer.frame = previewView.bounds
+                    
+                    previewView.layer.addSublayer(previewLayer)
+                    
+                    captureSesssion.startRunning()
+                }
+            } else {
+                print("issue here : captureSesssion.canAddInput")
+            }
+        } else {
+            print("some problem here")
+        }
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using [segue destinationViewController].
-        // Pass the selected object to the new view controller.
-    }
-    */
-
-    // MARK: UICollectionViewDataSource
-
-    override func numberOfSections(in collectionView: UICollectionView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
-        return 0
-    }
-
-
-    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of items
-        return 0
-    }
-
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath)
     
-        // Configure the cell
+    //MARK: Actions
+    func takePicture(_ sender: UIButton){
+        let settings = AVCapturePhotoSettings()
+        let previewPixelType = settings.availablePreviewPhotoPixelFormatTypes.first!
+        let previewFormat = [
+            kCVPixelBufferPixelFormatTypeKey as String: previewPixelType,
+            kCVPixelBufferWidthKey as String: 160,
+            kCVPixelBufferHeightKey as String: 160
+        ]
+        settings.previewPhotoFormat = previewFormat
+        cameraOutput.capturePhoto(with: settings, delegate: self)
+        
+        
+    }
     
-        return cell
+    // callBack from take picture
+    func capture(_ captureOutput: AVCapturePhotoOutput, didFinishProcessingPhotoSampleBuffer photoSampleBuffer: CMSampleBuffer?, previewPhotoSampleBuffer: CMSampleBuffer?, resolvedSettings: AVCaptureResolvedPhotoSettings, bracketSettings: AVCaptureBracketedStillImageSettings?, error: Error?) {
+        
+        if let error = error {
+            print("error occure : \(error.localizedDescription)")
+        }
+        
+        if  let sampleBuffer = photoSampleBuffer,
+            let previewBuffer = previewPhotoSampleBuffer,
+            let dataImage =  AVCapturePhotoOutput.jpegPhotoDataRepresentation(forJPEGSampleBuffer:  sampleBuffer, previewPhotoSampleBuffer: previewBuffer) {
+            print(UIImage(data: dataImage)?.size as Any)
+            
+            let dataProvider = CGDataProvider(data: dataImage as CFData)
+            let cgImageRef: CGImage! = CGImage(jpegDataProviderSource: dataProvider!, decode: nil, shouldInterpolate: true, intent: .defaultIntent)
+            let image = UIImage(cgImage: cgImageRef, scale: 1.0, orientation: UIImageOrientation.right)
+            
+            self.capturedImage.image = image
+            
+            var fileName : URL
+            if let data = UIImageJPEGRepresentation(image, 0.8) {
+                fileName = getDocumentsDirectory().appendingPathComponent("copy.png")
+                try? data.write(to: fileName)
+            } else {
+                print("could not convert image data to jpg")
+                return
+            }
+            
+            if let date = self.trueTimeClient?.referenceTime?.now(){
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "ss:mm:hh'T'dd-MM-yyyy"
+                dateFormatter.timeZone = TimeZone(abbreviation: "UTC")
+                let dateString = dateFormatter.string(from: date)
+                
+                let uploadRequest = AWSS3TransferManagerUploadRequest()
+                uploadRequest?.bucket = "cu-sky-imager"
+                uploadRequest?.key = dateString
+                uploadRequest?.body = fileName
+                
+                transferManager.upload(uploadRequest!).continueWith(executor: AWSExecutor.mainThread(), block: { (task:AWSTask<AnyObject>) -> Any? in
+                    print("Uploaded")
+                })
+            } else {
+                print("Unable to get time from TrueTime client. Could not upload image")
+            }
+        } else {
+            print("some error here")
+        }
     }
-
-    // MARK: UICollectionViewDelegate
-
-    /*
-    // Uncomment this method to specify if the specified item should be highlighted during tracking
-    override func collectionView(_ collectionView: UICollectionView, shouldHighlightItemAt indexPath: IndexPath) -> Bool {
-        return true
-    }
-    */
-
-    /*
-    // Uncomment this method to specify if the specified item should be selected
-    override func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
-        return true
-    }
-    */
-
-    /*
-    // Uncomment these methods to specify if an action menu should be displayed for the specified item, and react to actions performed on the item
-    override func collectionView(_ collectionView: UICollectionView, shouldShowMenuForItemAt indexPath: IndexPath) -> Bool {
-        return false
-    }
-
-    override func collectionView(_ collectionView: UICollectionView, canPerformAction action: Selector, forItemAt indexPath: IndexPath, withSender sender: Any?) -> Bool {
-        return false
-    }
-
-    override func collectionView(_ collectionView: UICollectionView, performAction action: Selector, forItemAt indexPath: IndexPath, withSender sender: Any?) {
     
+    func getDocumentsDirectory() -> URL {
+        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        let documentsDirectory = paths[0]
+        return documentsDirectory
     }
-    */
+
+
+
 
 }
