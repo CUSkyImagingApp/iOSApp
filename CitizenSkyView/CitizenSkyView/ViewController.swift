@@ -9,12 +9,11 @@
 import UIKit
 import AWSCore
 import AWSCognito
-import AWSS3
 import AWSDynamoDB
 import AVFoundation
 import TrueTime
 
-class ViewController: UIViewController, AVCapturePhotoCaptureDelegate {
+class ViewController: UIViewController {
     
     
     //MARK: Properties
@@ -24,7 +23,6 @@ class ViewController: UIViewController, AVCapturePhotoCaptureDelegate {
     
     var credentialProvider : AWSCognitoCredentialsProvider!
     var configuration : AWSServiceConfiguration!
-    var transferManager : AWSS3TransferManager!
     var dynamoDBObjectMapper : AWSDynamoDBObjectMapper?
     
     var trueTimeClient : TrueTimeClient?
@@ -51,7 +49,6 @@ class ViewController: UIViewController, AVCapturePhotoCaptureDelegate {
         trueTimeClient = TrueTimeClient.sharedInstance
         trueTimeClient?.start()
         
-
         
         let scanExpression = AWSDynamoDBScanExpression()
         scanExpression.limit = 20
@@ -68,9 +65,6 @@ class ViewController: UIViewController, AVCapturePhotoCaptureDelegate {
                     case let .success(referenceTime):
                         let now = referenceTime.now()
                         for event in paginatedOutput.items as! [Event]{
-                            print(event.Start!)
-                            print(event.End!)
-                            print(now)
                             if let start = dateFormatter.date(from: event.Start!), let end = dateFormatter.date(from: event.End!){
                                 if now > start && now < end {
                                     print("The event is now!")

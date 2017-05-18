@@ -28,6 +28,7 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
     var transferManager : AWSS3TransferManager!
     
     var trueTimeClient : TrueTimeClient?
+    var timer = Timer()
     
     @IBOutlet weak var capturedImage: UIImageView!
     @IBOutlet weak var previewView: UIView!
@@ -40,6 +41,8 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
         configuration = AWSServiceConfiguration(region:.USWest2, credentialsProvider:credentialProvider)
         AWSServiceManager.default().defaultServiceConfiguration = configuration
         transferManager = AWSS3TransferManager.default()
+        
+        trueTimeClient = TrueTimeClient.sharedInstance
         
         
         captureSesssion = AVCaptureSession()
@@ -55,12 +58,13 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
                     
                     captureSesssion.addOutput(cameraOutput)
                     previewLayer = AVCaptureVideoPreviewLayer(session: captureSesssion)
-                    print(previewView)
+
                     previewLayer.frame = previewView.bounds
                     
                     previewView.layer.addSublayer(previewLayer)
                     
                     captureSesssion.startRunning()
+                    startThirtySecondCapture()
                 }
             } else {
                 print("issue here : captureSesssion.canAddInput")
@@ -68,6 +72,8 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
         } else {
             print("some problem here")
         }
+        
+
     }
 
     override func didReceiveMemoryWarning() {
@@ -76,7 +82,12 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
     }
     
     //MARK: Actions
-    func takePicture(_ sender: UIButton){
+    func startThirtySecondCapture(){
+        timer = Timer.scheduledTimer(timeInterval: 30, target: self, selector: (#selector(ImageCaptureViewController.takePicture)), userInfo: nil, repeats: true)
+    }
+    
+    
+    func takePicture(){
         let settings = AVCapturePhotoSettings()
         let previewPixelType = settings.availablePreviewPhotoPixelFormatTypes.first!
         let previewFormat = [
@@ -117,9 +128,10 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
                 return
             }
             
+            
             if let date = self.trueTimeClient?.referenceTime?.now(){
                 let dateFormatter = DateFormatter()
-                dateFormatter.dateFormat = "ss:mm:hh'T'dd-MM-yyyy"
+                dateFormatter.dateFormat = "yyyy-MM-dd'T'hh:mm:ss"
                 dateFormatter.timeZone = TimeZone(abbreviation: "UTC")
                 let dateString = dateFormatter.string(from: date)
                 
