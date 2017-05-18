@@ -17,9 +17,6 @@ class ViewController: UIViewController {
     
     
     //MARK: Properties
-    var captureSesssion : AVCaptureSession!
-    var cameraOutput : AVCapturePhotoOutput!
-    var previewLayer : AVCaptureVideoPreviewLayer!
     
     var credentialProvider : AWSCognitoCredentialsProvider!
     var configuration : AWSServiceConfiguration!
@@ -92,6 +89,8 @@ class ViewController: UIViewController {
             }
             return ()
         })
+        //Ask for camera permission
+        askPermission()
 
         
     }
@@ -137,7 +136,7 @@ class ViewController: UIViewController {
                     print("User Rejected")
                     
                     DispatchQueue.main.async(){
-                        let alert = UIAlertController(title: "WHY?" , message:  "Camera it is the main feature of our application", preferredStyle: .alert)
+                        let alert = UIAlertController(title: "Camera Needed!" , message:  "The camera is the main feature of our application", preferredStyle: .alert)
                         let action = UIAlertAction(title: "Ok", style: .cancel, handler: nil)
                         alert.addAction(action)
                         self?.present(alert, animated: true, completion: nil)  

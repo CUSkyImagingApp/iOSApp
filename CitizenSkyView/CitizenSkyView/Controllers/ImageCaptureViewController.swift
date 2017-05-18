@@ -87,7 +87,7 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
     
     //MARK: Actions
     //Calculate when the first 30 second interval should start
-    func startThirtySecondCapture(){
+    func startThirtySecondCapture(){ 
         if let datetime = self.trueTimeClient?.referenceTime?.now() {
             let calendar = Calendar.current
             let seconds = calendar.component(.second, from: datetime)
