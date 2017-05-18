@@ -32,8 +32,7 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
     
     var onThirtySecondTimer = false
     
-    @IBOutlet weak var capturedImage: UIImageView!
-    @IBOutlet weak var previewView: UIView!
+
 
 
     override func viewDidLoad() {
@@ -59,11 +58,6 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
                 if (captureSesssion.canAddOutput(cameraOutput)) {
                     
                     captureSesssion.addOutput(cameraOutput)
-                    previewLayer = AVCaptureVideoPreviewLayer(session: captureSesssion)
-
-                    previewLayer.frame = previewView.bounds
-                    
-                    previewView.layer.addSublayer(previewLayer)
                     
                     captureSesssion.startRunning()
                     
@@ -117,7 +111,7 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
     
     // callBack from take picture
     func capture(_ captureOutput: AVCapturePhotoOutput, didFinishProcessingPhotoSampleBuffer photoSampleBuffer: CMSampleBuffer?, previewPhotoSampleBuffer: CMSampleBuffer?, resolvedSettings: AVCaptureResolvedPhotoSettings, bracketSettings: AVCaptureBracketedStillImageSettings?, error: Error?) {
-        
+        print("Image Captured")
         if let error = error {
             print("error occure : \(error.localizedDescription)")
         }
@@ -130,7 +124,6 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
             let cgImageRef: CGImage! = CGImage(jpegDataProviderSource: dataProvider!, decode: nil, shouldInterpolate: true, intent: .defaultIntent)
             let image = UIImage(cgImage: cgImageRef, scale: 1.0, orientation: UIImageOrientation.right)
             
-            self.capturedImage.image = image
             
             var fileName : URL
             if let data = UIImageJPEGRepresentation(image, 0.8) {
