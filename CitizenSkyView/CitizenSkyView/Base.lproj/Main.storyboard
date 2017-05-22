@@ -30,7 +30,7 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Ready to Go!"/>
                                 <connections>
-                                    <segue destination="t1e-li-Vlu" kind="show" id="7oV-pZ-dtg"/>
+                                    <segue destination="t1e-li-Vlu" kind="show" identifier="InitiateEvent" id="7oV-pZ-dtg"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -81,6 +81,10 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
+                    <connections>
+                        <outlet property="countdownLabel" destination="JNE-5E-JpN" id="hem-Ji-ORQ"/>
+                        <outlet property="timeRemaining" destination="L8A-pu-OGs" id="QI5-bd-5Cs"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="IKq-Qc-zqW" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

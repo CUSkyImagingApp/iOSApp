@@ -29,10 +29,19 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
     
     var trueTimeClient : TrueTimeClient?
     var timer = Timer()
+    var countdownTimer = Timer()
     
     var onThirtySecondTimer = false
+    var onCoundownSeconds = false
+    var secondsTilStart : TimeInterval?
     
-
+    var eventStart : Date?
+    var eventEnd : Date?
+    
+    var eventHappening = false
+    
+    @IBOutlet weak var timeRemaining : UILabel!
+    @IBOutlet weak var countdownLabel : UILabel!
 
 
     override func viewDidLoad() {
@@ -50,6 +59,9 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
         captureSesssion.sessionPreset = AVCaptureSessionPresetPhoto
         cameraOutput = AVCapturePhotoOutput()
         
+        onThirtySecondTimer = false
+        onCoundownSeconds = false
+        
         let device = AVCaptureDevice.defaultDevice(withMediaType: AVMediaTypeVideo)
         
         if let input = try? AVCaptureDeviceInput(device: device) {
@@ -62,7 +74,21 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
                     captureSesssion.startRunning()
                     
                     self.onThirtySecondTimer = false
-                    startThirtySecondCapture()
+                    if let now = self.trueTimeClient?.referenceTime?.now() {
+                        if let start = self.eventStart, let end = self.eventEnd {
+                            if now > start && now < end {
+                                print("Event Started")
+                                self.timeRemaining.isHidden = true
+                                self.countdownLabel.isHidden = true
+                                self.eventHappening = true
+                                startThirtySecondCapture()
+                            } else {
+                                print("Event Starting Soon")
+                                startCountdown()
+                                
+                            }
+                        }
+                    }
                 }
             } else {
                 print("issue here : captureSesssion.canAddInput")
@@ -70,8 +96,6 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
         } else {
             print("some problem here")
         }
-        
-
     }
 
     override func didReceiveMemoryWarning() {
@@ -80,18 +104,64 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
     }
     
     //MARK: Actions
+    func startCountdown(){
+        if let datetime = self.trueTimeClient?.referenceTime?.now(), let start = self.eventStart{
+            let diff = datetime.timeIntervalSince(start)
+            self.secondsTilStart = diff
+            
+            //set image capture timer
+            self.timer = Timer.scheduledTimer(timeInterval: diff, target: self, selector: (#selector(ImageCaptureViewController.takePicture)), userInfo: nil, repeats: false)
+            self.onThirtySecondTimer = true
+
+            
+            //start countdown timer
+            self.countdownTimer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: (#selector(ImageCaptureViewController.updateCountdown)), userInfo: nil, repeats: true)
+            self.timeRemaining.text = timeString(time: self.secondsTilStart!)
+        } else {
+            print("unable to align time with true time client.")
+            //This is acutally a error case now, handle it
+        }
+    }
+    
+    func updateCountdown(){
+        //Change structure to check for image capture first
+        if self.eventHappening {
+            //Image capture has started, hide countdown
+            self.countdownTimer.invalidate()
+            self.countdownLabel.isHidden = true
+            self.timeRemaining.isHidden = true
+        } else {
+            if let curr = self.trueTimeClient?.referenceTime?.now(){
+                self.secondsTilStart = curr.timeIntervalSince(self.eventStart!)
+                self.timeRemaining.text = timeString(time: self.secondsTilStart!)
+            } else {
+                print("unable to decrement time due to nil true time client reference time")
+            }
+        }
+    }
+    
+    func timeString(time: TimeInterval) -> String {
+        let hours = Int(time) / 3600
+        let minutes = Int(time) / 60 % 60
+        let seconds = Int(time) % 60
+        return String(format: "%02i:%02i:%02i", hours, minutes, seconds)
+    }
+    
+    
     //Calculate when the first 30 second interval should start
-    func startThirtySecondCapture(){ 
+    func startThirtySecondCapture(){
         if let datetime = self.trueTimeClient?.referenceTime?.now() {
             let calendar = Calendar.current
             let seconds = calendar.component(.second, from: datetime)
-            let offset = (30 - (seconds % 30))
+            let nanosecs = Double(calendar.component(.nanosecond, from: datetime)) / Double(1000000000)
+            let offset = Double((30 - (seconds % 30))) - nanosecs
             self.timer = Timer.scheduledTimer(timeInterval: TimeInterval(offset), target: self, selector: (#selector(ImageCaptureViewController.takePicture)), userInfo: nil, repeats: false)
         }
     }
     
     
     func takePicture(){
+        self.eventHappening = true
         if !onThirtySecondTimer {
             self.timer = Timer.scheduledTimer(timeInterval: 30, target: self, selector: (#selector(ImageCaptureViewController.takePicture)), userInfo: nil, repeats: true)
             self.onThirtySecondTimer = true

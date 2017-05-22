@@ -24,6 +24,9 @@ class ViewController: UIViewController {
     
     var trueTimeClient : TrueTimeClient?
     
+    var eventStart : Date?
+    var eventEnd : Date?
+    
 
     @IBOutlet weak var eventSpinner: UIActivityIndicatorView!
     @IBOutlet weak var readyButton: UIButton!
@@ -67,7 +70,8 @@ class ViewController: UIViewController {
                                     print("The event is now!")
                                     self.eventSpinner.stopAnimating()
                                     self.readyButton.isHidden = false
-                                    
+                                    self.eventStart = start
+                                    self.eventEnd = end
                                 } else {
                                     print("The event is not now")
                                     
@@ -98,6 +102,15 @@ class ViewController: UIViewController {
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "InitiateEvent" {
+            if let destination = segue.destination as? ImageCaptureViewController {
+                destination.eventStart = self.eventStart
+                destination.eventEnd = self.eventEnd
+            }
+        }
     }
     
     //MARK: Actions
