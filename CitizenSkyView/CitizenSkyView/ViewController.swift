@@ -26,11 +26,14 @@ class ViewController: UIViewController {
     
     var eventStart : Date?
     var eventEnd : Date?
-    
+    var eventName : String?
+    var eventOccuring = false
 
     @IBOutlet weak var eventSpinner: UIActivityIndicatorView!
     @IBOutlet weak var readyButton: UIButton!
-
+    @IBOutlet weak var eventInfo : UILabel!
+    @IBOutlet weak var dateLabel: UILabel!
+    @IBOutlet weak var timeLabel: UILabel!
 
 
     override func viewDidLoad() {
@@ -38,6 +41,8 @@ class ViewController: UIViewController {
         readyButton.isHidden = true
         eventSpinner.startAnimating()
         eventSpinner.hidesWhenStopped = true
+        dateLabel.isHidden = true
+        timeLabel.isHidden = true
         credentialProvider = AWSCognitoCredentialsProvider(regionType:.USWest2,
                                                             identityPoolId:"us-west-2:43473766-619f-4209-996b-7dc61e65ccf1")
         configuration = AWSServiceConfiguration(region:.USWest2, credentialsProvider:credentialProvider)
@@ -49,6 +54,11 @@ class ViewController: UIViewController {
         trueTimeClient = TrueTimeClient.sharedInstance
         trueTimeClient?.start()
         
+        
+        //self.eventSpinner.stopAnimating()
+        //self.readyButton.isHidden = false
+        //self.eventStart = start
+        //self.eventEnd = end
         
         let scanExpression = AWSDynamoDBScanExpression()
         scanExpression.limit = 20
@@ -66,16 +76,39 @@ class ViewController: UIViewController {
                         let now = referenceTime.now()
                         for event in paginatedOutput.items as! [Event]{
                             if let start = dateFormatter.date(from: event.Start!), let end = dateFormatter.date(from: event.End!){
-                                if now > start && now < end {
-                                    print("The event is now!")
-                                    self.eventSpinner.stopAnimating()
-                                    self.readyButton.isHidden = false
-                                    self.eventStart = start
-                                    self.eventEnd = end
-                                } else {
-                                    print("The event is not now")
-                                    
-                                    //TODO: Deal with multiple events in DynamoDB
+                                if now < end {
+                                    //The event is in progress or hasn't started
+                                    if now > start {
+                                        //event is now, this is the event we should start
+                                        self.eventOccuring = true
+                                        self.eventStart = start
+                                        self.eventEnd = end
+                                        self.eventName = event.EventName
+                                        self.eventSpinner.stopAnimating()
+                                        self.readyButton.isHidden = false
+                                        if let eventName = event.EventName {
+                                            self.eventInfo.text = eventName + " is currently running"
+                                            self.eventInfo.sizeToFit()
+                                        } else {
+                                            self.eventInfo.text = "There is currently an ongoing event. \nClick the button below to start taking pictures"
+                                            self.eventInfo.sizeToFit()
+                                        }
+                                        print("Event happening")
+                                        self.eventInfo.center.x = self.view.center.x
+                                        
+                                    } else if let savedStart = self.eventStart{
+                                        if start < savedStart {
+                                            //This event will happen sooner, this is candidate
+                                            self.eventStart = start
+                                            self.eventEnd = end
+                                            self.eventName = event.EventName
+                                        }
+                                    } else {
+                                        //Not a current event and also must be the first event in the table, so just save it as the candidate
+                                        self.eventStart = start
+                                        self.eventEnd = end
+                                        self.eventName = event.EventName
+                                    }
                                 }
                             } else {
                                 print("unable to convert start and/or end date into datetime object")
@@ -83,6 +116,39 @@ class ViewController: UIViewController {
                             }
                             
                         }
+                        //Have parsed through all events
+                        self.eventSpinner.stopAnimating()
+                        if !self.eventOccuring {
+                            if let start = self.eventStart, let end = self.eventEnd {
+                                //This is the soonest event
+                                dateFormatter.dateFormat = "MMM d, yyyy"
+                                self.dateLabel.isHidden = false
+                                self.dateLabel.text = dateFormatter.string(from: start)
+                                self.dateLabel.sizeToFit()
+                                dateFormatter.dateFormat = "HH:mm"
+                                let startTime = dateFormatter.string(from: start)
+                                let endTime = dateFormatter.string(from: end)
+                                self.timeLabel.isHidden = false
+                                self.timeLabel.text = startTime + " - " + endTime
+                                self.timeLabel.sizeToFit()
+                                if let eventName = self.eventName {
+                                    self.eventInfo.text = eventName + " will occur"
+                                } else {
+                                    self.eventInfo.text = "The next event will occur"
+                                }
+                                self.eventInfo.sizeToFit()
+                                self.eventInfo.center.x = self.view.center.x
+                                self.dateLabel.center.x = self.view.center.x
+                                self.timeLabel.center.x = self.view.center.x
+                                //TODO: Don't enable if event is more than 24 hours out
+                                self.readyButton.isHidden = false
+                            } else {
+                                self.eventInfo.text = "There are no upcoming events"
+                                self.eventInfo.sizeToFit()
+                                self.eventInfo.center.x = self.view.center.x
+                            }
+                        }
+                        
                     case let .failure(error):
                         print("Error! \(error)")
                     }
