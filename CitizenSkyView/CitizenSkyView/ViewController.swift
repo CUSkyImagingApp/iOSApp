@@ -60,11 +60,48 @@ class ViewController: UIViewController {
         trueTimeClient?.start()
         
         locationManager = CLLocationManager()
+        getEventsFromDynamoDB()
         
+        //Ask for camera and location permission
+        askPermission()
+
         
+    }
+
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "InitiateEvent" {
+            if let destination = segue.destination as? ImageCaptureViewController {
+                destination.eventStart = self.eventStart
+                destination.eventEnd = self.eventEnd
+            }
+        }
+    }
+    //Lock to portrait mode
+    open override var shouldAutorotate: Bool {
+        get {
+            return false
+        }
+    }
+    open override var supportedInterfaceOrientations: UIInterfaceOrientationMask{
+        get {
+            return .portrait
+        }
+    }
+    
+    //MARK: Actions
+    func getEventsFromDynamoDB() {
+        self.eventSpinner.startAnimating()
+        self.eventInfo.text = "Searching for Upcoming Events"
+        self.dateLabel.isHidden = true
+        self.timeLabel.isHidden = true
+        self.readyButton.isHidden = true
         let scanExpression = AWSDynamoDBScanExpression()
         scanExpression.limit = 20
-        
         dynamoDBObjectMapper?.scan(Event.self, expression: scanExpression).continueWith(block: {(task:AWSTask<AWSDynamoDBPaginatedOutput>) -> Any? in
             if let error = task.error as NSError? {
                 print("The request failed. Error \(error)")
@@ -157,43 +194,12 @@ class ViewController: UIViewController {
                 }
             } else {
                 print("There was no error, but the response was empty")
-
+                
             }
             return ()
         })
-        //Ask for camera permission
-        askPermission()
 
-        
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "InitiateEvent" {
-            if let destination = segue.destination as? ImageCaptureViewController {
-                destination.eventStart = self.eventStart
-                destination.eventEnd = self.eventEnd
-            }
-        }
-    }
-    //Lock to portrait mode
-    open override var shouldAutorotate: Bool {
-        get {
-            return false
-        }
-    }
-    open override var supportedInterfaceOrientations: UIInterfaceOrientationMask{
-        get {
-            return .portrait
-        }
-    }
-    
-    //MARK: Actions
-    
     // This method you can use somewhere you need to know camera permission   state
     func askPermission() {
         let cameraPermissionStatus =  AVCaptureDevice.authorizationStatus(forMediaType: AVMediaTypeVideo)
@@ -263,6 +269,7 @@ class ViewController: UIViewController {
     @IBAction func returnFromEvent(segue:UIStoryboardSegue){
         //Re check for events
         print("returned from event page")
+        getEventsFromDynamoDB()
     }
     
 

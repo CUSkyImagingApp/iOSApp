@@ -266,7 +266,7 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
                 
                 let uploadRequest = AWSS3TransferManagerUploadRequest()
                 uploadRequest?.bucket = "cu-sky-imager"
-                uploadRequest?.key = dateString
+                uploadRequest?.key = dateString + ".jpg"
                 uploadRequest?.body = fileName
                 uploadRequest?.metadata = metadata
                 
