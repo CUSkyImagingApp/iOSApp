@@ -15,7 +15,7 @@ import TrueTime
 import CoreLocation
 
 
-class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegate  {
+class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegate, CLLocationManagerDelegate  {
     
     
     //MARK: Properties
@@ -39,6 +39,8 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
     var eventEnd : Date?
     var eventHappening = false
     
+    var manager : CLLocationManager?
+    var mostRecentLocation : CLLocation?
     
     
     @IBOutlet weak var timeRemaining : UILabel!
@@ -63,6 +65,11 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
         
         onThirtySecondTimer = false
         onCoundownSeconds = false
+        
+        manager = CLLocationManager()
+        manager?.delegate = self
+        manager?.requestLocation()
+        
         
         let device = AVCaptureDevice.defaultDevice(withMediaType: AVMediaTypeVideo)
         
@@ -215,9 +222,10 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
             let cgImageRef: CGImage! = CGImage(jpegDataProviderSource: dataProvider!, decode: nil, shouldInterpolate: true, intent: .defaultIntent)
             let image = UIImage(cgImage: cgImageRef, scale: 1.0, orientation: UIImageOrientation.right)
             
-            
+            var metadata = [String: String]()
             var fileName : URL
             if let data = UIImageJPEGRepresentation(image, 0.8) {
+                metadata["size"] = String(data.count)
                 fileName = getDocumentsDirectory().appendingPathComponent("copy.png")
                 try? data.write(to: fileName)
             } else {
@@ -232,10 +240,25 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
                 dateFormatter.timeZone = TimeZone(abbreviation: "UTC")
                 let dateString = dateFormatter.string(from: date)
                 
+                
+                metadata["timestamp"] = dateString
+                metadata["filetype"] = "JPEG"
+                metadata["sizex"] = String(describing: image.size.width)
+                metadata["sizey"] = String(describing: image.size.height)
+                
+                if let location = self.mostRecentLocation {
+                    metadata["lat"] = String(location.coordinate.latitude)
+                    metadata["lon"] = String(location.coordinate.longitude)
+                } else {
+                    print("Last location unknown")
+                }
+                
+                
                 let uploadRequest = AWSS3TransferManagerUploadRequest()
                 uploadRequest?.bucket = "cu-sky-imager"
                 uploadRequest?.key = dateString
                 uploadRequest?.body = fileName
+                uploadRequest?.metadata = metadata
                 
                 transferManager.upload(uploadRequest!).continueWith(executor: AWSExecutor.mainThread(), block: { (task:AWSTask<AnyObject>) -> Any? in
                     print("Uploaded")
@@ -246,6 +269,14 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
         } else {
             print("some error here")
         }
+    }
+    
+    //callback from the requestLocation method
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        self.mostRecentLocation = locations.last
+    }
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print("Error getting location")
     }
     
     func getDocumentsDirectory() -> URL {
