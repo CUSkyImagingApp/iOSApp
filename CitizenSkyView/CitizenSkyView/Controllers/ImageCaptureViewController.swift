@@ -103,7 +103,16 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
         // Dispose of any resources that can be recreated.
     }
     
+    
     //MARK: Actions
+    @IBAction func returnToMainPage(){
+        print("Invalidating timers")
+        self.timer.invalidate()
+        self.countdownTimer.invalidate()
+        self.dismiss(animated: true, completion: nil)
+    }
+    
+    
     func startCountdown(){
         if let datetime = self.trueTimeClient?.referenceTime?.now(), let start = self.eventStart {
             let diff = start.timeIntervalSince(datetime)

@@ -102,6 +102,15 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7Av-mx-l9L">
+                                <rect key="frame" x="16" y="29" width="34" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Back"/>
+                                <connections>
+                                    <action selector="returnToMainPage" destination="t1e-li-Vlu" eventType="touchUpInside" id="q62-G8-mLh"/>
+                                    <segue destination="pll-kD-SU8" kind="unwind" unwindAction="returnFromEventWithSegue:" id="9pv-cn-4GT"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
@@ -112,6 +121,7 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="IKq-Qc-zqW" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="pll-kD-SU8" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="1080.8" y="36.431784107946029"/>
         </scene>

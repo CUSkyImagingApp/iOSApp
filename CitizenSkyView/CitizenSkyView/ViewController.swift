@@ -221,8 +221,14 @@ class ViewController: UIViewController {
                         self?.present(alert, animated: true, completion: nil)  
                     } 
                 }
-            });
+            })
         }
+    }
+    
+    
+    @IBAction func returnFromEvent(segue:UIStoryboardSegue){
+        //Re check for events
+        print("returned from event page")
     }
     
 
