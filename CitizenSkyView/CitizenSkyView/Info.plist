@@ -43,5 +43,7 @@
 	</array>
 	<key>NSCameraUsageDescription</key>
 	<string>The camera is used to take pictures of clouds</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Location is needed to determine where the images are being captured</string>
 </dict>
 </plist>

@@ -12,6 +12,7 @@ import AWSCognito
 import AWSS3
 import AVFoundation
 import TrueTime
+import CoreLocation
 
 
 class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegate  {
@@ -36,8 +37,10 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
     
     var eventStart : Date?
     var eventEnd : Date?
-    
     var eventHappening = false
+    
+    var locationManager: CLLocationManager = CLLocationManager()
+    
     
     @IBOutlet weak var timeRemaining : UILabel!
     @IBOutlet weak var countdownLabel : UILabel!
