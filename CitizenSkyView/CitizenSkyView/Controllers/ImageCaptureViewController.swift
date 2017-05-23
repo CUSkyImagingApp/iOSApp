@@ -213,28 +213,27 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
         if let error = error {
             print("error occure : \(error.localizedDescription)")
         }
-        
-        if  let sampleBuffer = photoSampleBuffer,
-            let previewBuffer = previewPhotoSampleBuffer,
-            let dataImage =  AVCapturePhotoOutput.jpegPhotoDataRepresentation(forJPEGSampleBuffer:  sampleBuffer, previewPhotoSampleBuffer: previewBuffer) {
+        if let date = self.trueTimeClient?.referenceTime?.now() {
             
-            let dataProvider = CGDataProvider(data: dataImage as CFData)
-            let cgImageRef: CGImage! = CGImage(jpegDataProviderSource: dataProvider!, decode: nil, shouldInterpolate: true, intent: .defaultIntent)
-            let image = UIImage(cgImage: cgImageRef, scale: 1.0, orientation: UIImageOrientation.right)
+            if  let sampleBuffer = photoSampleBuffer,
+                let previewBuffer = previewPhotoSampleBuffer,
+                let dataImage =  AVCapturePhotoOutput.jpegPhotoDataRepresentation(forJPEGSampleBuffer:  sampleBuffer, previewPhotoSampleBuffer: previewBuffer) {
+                
+                let dataProvider = CGDataProvider(data: dataImage as CFData)
+                let cgImageRef: CGImage! = CGImage(jpegDataProviderSource: dataProvider!, decode: nil, shouldInterpolate: true, intent: .defaultIntent)
+                let image = UIImage(cgImage: cgImageRef, scale: 1.0, orientation: UIImageOrientation.right)
+                
+                var metadata = [String: String]()
+                var fileName : URL
+                if let data = UIImageJPEGRepresentation(image, 0.8) {
+                    metadata["size"] = String(data.count)
+                    fileName = getDocumentsDirectory().appendingPathComponent("copy.png")
+                    try? data.write(to: fileName)
+                } else {
+                    print("could not convert image data to jpg")
+                    return
+                }
             
-            var metadata = [String: String]()
-            var fileName : URL
-            if let data = UIImageJPEGRepresentation(image, 0.8) {
-                metadata["size"] = String(data.count)
-                fileName = getDocumentsDirectory().appendingPathComponent("copy.png")
-                try? data.write(to: fileName)
-            } else {
-                print("could not convert image data to jpg")
-                return
-            }
-            
-            
-            if let date = self.trueTimeClient?.referenceTime?.now(){
                 let dateFormatter = DateFormatter()
                 dateFormatter.dateFormat = "yyyy-MM-dd'T'hh:mm:ss"
                 dateFormatter.timeZone = TimeZone(abbreviation: "UTC")
@@ -263,11 +262,12 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
                 transferManager.upload(uploadRequest!).continueWith(executor: AWSExecutor.mainThread(), block: { (task:AWSTask<AnyObject>) -> Any? in
                     print("Uploaded")
                 })
+
             } else {
-                print("Unable to get time from TrueTime client. Could not upload image")
+                print("unable to get image data from image data buffers")
             }
         } else {
-            print("some error here")
+            print("Could not get reference time from true time client")
         }
     }
     
