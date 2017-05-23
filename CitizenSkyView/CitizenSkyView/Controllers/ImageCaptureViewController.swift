@@ -39,7 +39,6 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
     var eventEnd : Date?
     var eventHappening = false
     
-    var locationManager: CLLocationManager = CLLocationManager()
     
     
     @IBOutlet weak var timeRemaining : UILabel!

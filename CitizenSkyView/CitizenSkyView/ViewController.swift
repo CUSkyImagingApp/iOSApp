@@ -12,6 +12,7 @@ import AWSCognito
 import AWSDynamoDB
 import AVFoundation
 import TrueTime
+import CoreLocation
 
 class ViewController: UIViewController {
     
@@ -28,12 +29,16 @@ class ViewController: UIViewController {
     var eventEnd : Date?
     var eventName : String?
     var eventOccuring = false
+    
+    var locationManager : CLLocationManager?
 
     @IBOutlet weak var eventSpinner: UIActivityIndicatorView!
     @IBOutlet weak var readyButton: UIButton!
     @IBOutlet weak var eventInfo : UILabel!
     @IBOutlet weak var dateLabel: UILabel!
     @IBOutlet weak var timeLabel: UILabel!
+    
+    
 
 
     override func viewDidLoad() {
@@ -54,11 +59,8 @@ class ViewController: UIViewController {
         trueTimeClient = TrueTimeClient.sharedInstance
         trueTimeClient?.start()
         
+        locationManager = CLLocationManager()
         
-        //self.eventSpinner.stopAnimating()
-        //self.readyButton.isHidden = false
-        //self.eventStart = start
-        //self.eventEnd = end
         
         let scanExpression = AWSDynamoDBScanExpression()
         scanExpression.limit = 20
@@ -223,6 +225,27 @@ class ViewController: UIViewController {
                 }
             })
         }
+        
+        let locationPermissionStatus = CLLocationManager.authorizationStatus()
+        
+        switch locationPermissionStatus {
+        case .notDetermined:
+            self.locationManager?.requestWhenInUseAuthorization()
+            break
+        case .authorizedWhenInUse:
+            print("Already authorized when in use")
+            break
+        case .denied:
+            print("Denied location access")
+            break
+        case .restricted:
+            print("location access restricted")
+            break
+        case .authorizedAlways:
+            print("Always authorized")
+            break
+        }
+    
     }
     
     
