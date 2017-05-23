@@ -180,6 +180,17 @@ class ViewController: UIViewController {
             }
         }
     }
+    //Lock to portrait mode
+    open override var shouldAutorotate: Bool {
+        get {
+            return false
+        }
+    }
+    open override var supportedInterfaceOrientations: UIInterfaceOrientationMask{
+        get {
+            return .portrait
+        }
+    }
     
     //MARK: Actions
     
