@@ -18,7 +18,6 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
     
     
     //MARK: Properties
-    //MARK: Properties
     var captureSesssion : AVCaptureSession!
     var cameraOutput : AVCapturePhotoOutput!
     var previewLayer : AVCaptureVideoPreviewLayer!
@@ -42,6 +41,7 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
     
     @IBOutlet weak var timeRemaining : UILabel!
     @IBOutlet weak var countdownLabel : UILabel!
+    @IBOutlet weak var centerText : UILabel!
 
 
     override func viewDidLoad() {
@@ -105,13 +105,13 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
     
     //MARK: Actions
     func startCountdown(){
-        if let datetime = self.trueTimeClient?.referenceTime?.now(), let start = self.eventStart{
-            let diff = datetime.timeIntervalSince(start)
+        if let datetime = self.trueTimeClient?.referenceTime?.now(), let start = self.eventStart {
+            let diff = start.timeIntervalSince(datetime)
+            print(diff)
             self.secondsTilStart = diff
             
             //set image capture timer
             self.timer = Timer.scheduledTimer(timeInterval: diff, target: self, selector: (#selector(ImageCaptureViewController.takePicture)), userInfo: nil, repeats: false)
-            self.onThirtySecondTimer = true
 
             
             //start countdown timer
@@ -132,8 +132,10 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
             self.timeRemaining.isHidden = true
         } else {
             if let curr = self.trueTimeClient?.referenceTime?.now(){
-                self.secondsTilStart = curr.timeIntervalSince(self.eventStart!)
+                self.secondsTilStart = self.eventStart!.timeIntervalSince(curr)
                 self.timeRemaining.text = timeString(time: self.secondsTilStart!)
+                self.timeRemaining.sizeToFit()
+                self.timeRemaining.center.x = self.view.center.x
             } else {
                 print("unable to decrement time due to nil true time client reference time")
             }
@@ -156,6 +158,7 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
             let nanosecs = Double(calendar.component(.nanosecond, from: datetime)) / Double(1000000000)
             let offset = Double((30 - (seconds % 30))) - nanosecs
             self.timer = Timer.scheduledTimer(timeInterval: TimeInterval(offset), target: self, selector: (#selector(ImageCaptureViewController.takePicture)), userInfo: nil, repeats: false)
+            self.onThirtySecondTimer = false
         }
     }
     
@@ -176,7 +179,14 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
         ]
         settings.previewPhotoFormat = previewFormat
         cameraOutput.capturePhoto(with: settings, delegate: self)
-        
+        if let now = self.trueTimeClient?.referenceTime?.now() {
+            if now > self.eventEnd! {
+                //Event is over!
+                self.timer.invalidate()
+                self.centerText.text = "Event complete!"
+                self.centerText.isHidden = false
+            }
+        }
     }
     
     // callBack from take picture
