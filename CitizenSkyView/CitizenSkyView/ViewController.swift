@@ -34,6 +34,8 @@ class ViewController: UIViewController,  CLLocationManagerDelegate{
     
     var cameraAuthorized = false
     var locationAuthorized = false
+    
+    let refreshNotification = Notification.Name(rawValue: "refresh")
 
     @IBOutlet weak var eventSpinner: UIActivityIndicatorView!
     @IBOutlet weak var readyButton: UIButton!
@@ -62,11 +64,13 @@ class ViewController: UIViewController,  CLLocationManagerDelegate{
         trueTimeClient = TrueTimeClient.sharedInstance
         trueTimeClient?.start()
         
+        let nc = NotificationCenter.default
+        nc.addObserver(forName: refreshNotification, object: nil, queue: nil, using: refreshPage)
+        
         manager = CLLocationManager()
         manager?.delegate = self
-        getEventsFromDynamoDB()
         
-        //Ask for camera and location permission
+        getEventsFromDynamoDB()
         askPermission()
 
         
@@ -98,6 +102,12 @@ class ViewController: UIViewController,  CLLocationManagerDelegate{
     }
     
     //MARK: Actions
+    func refreshPage(notification: Notification) -> Void{
+        print("refresh")
+        getEventsFromDynamoDB()
+        askPermission()
+    }
+    
     func getEventsFromDynamoDB() {
         self.eventSpinner.startAnimating()
         self.eventInfo.text = "Searching for Upcoming Events"
