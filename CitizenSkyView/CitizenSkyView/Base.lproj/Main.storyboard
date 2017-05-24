@@ -54,6 +54,14 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="JV6-G4-Peb">
+                                <rect key="frame" x="139" y="382" width="98" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Go to Settings"/>
+                                <connections>
+                                    <action selector="goToSettings" destination="BYZ-38-t0r" eventType="touchUpInside" id="Ff9-TU-add"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </view>
@@ -62,6 +70,7 @@
                         <outlet property="eventInfo" destination="xL2-4f-Cgi" id="RRE-eG-Dzz"/>
                         <outlet property="eventSpinner" destination="Pl9-W3-b5n" id="Cpb-GX-w6e"/>
                         <outlet property="readyButton" destination="Ozs-qT-55z" id="w5A-9O-SjJ"/>
+                        <outlet property="settingsButton" destination="JV6-G4-Peb" id="alb-NW-52q"/>
                         <outlet property="timeLabel" destination="1KH-3d-fe2" id="ans-wS-kN3"/>
                     </connections>
                 </viewController>

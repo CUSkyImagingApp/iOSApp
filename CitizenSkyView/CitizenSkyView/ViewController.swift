@@ -14,7 +14,7 @@ import AVFoundation
 import TrueTime
 import CoreLocation
 
-class ViewController: UIViewController {
+class ViewController: UIViewController,  CLLocationManagerDelegate{
     
     
     //MARK: Properties
@@ -30,14 +30,17 @@ class ViewController: UIViewController {
     var eventName : String?
     var eventOccuring = false
     
-    var locationManager : CLLocationManager?
+    var manager : CLLocationManager?
+    
+    var cameraAuthorized = false
+    var locationAuthorized = false
 
     @IBOutlet weak var eventSpinner: UIActivityIndicatorView!
     @IBOutlet weak var readyButton: UIButton!
     @IBOutlet weak var eventInfo : UILabel!
     @IBOutlet weak var dateLabel: UILabel!
     @IBOutlet weak var timeLabel: UILabel!
-    
+    @IBOutlet weak var settingsButton: UIButton!
     
 
 
@@ -59,7 +62,8 @@ class ViewController: UIViewController {
         trueTimeClient = TrueTimeClient.sharedInstance
         trueTimeClient?.start()
         
-        locationManager = CLLocationManager()
+        manager = CLLocationManager()
+        manager?.delegate = self
         getEventsFromDynamoDB()
         
         //Ask for camera and location permission
@@ -123,17 +127,7 @@ class ViewController: UIViewController {
                                         self.eventStart = start
                                         self.eventEnd = end
                                         self.eventName = event.EventName
-                                        self.eventSpinner.stopAnimating()
-                                        self.readyButton.isHidden = false
-                                        if let eventName = event.EventName {
-                                            self.eventInfo.text = eventName + " is currently running"
-                                            self.eventInfo.sizeToFit()
-                                        } else {
-                                            self.eventInfo.text = "There is currently an ongoing event. \nClick the button below to start taking pictures"
-                                            self.eventInfo.sizeToFit()
-                                        }
-                                        print("Event happening")
-                                        self.eventInfo.center.x = self.view.center.x
+                                        self.displayEvent()
                                         
                                     } else if let savedStart = self.eventStart{
                                         if start < savedStart {
@@ -158,34 +152,7 @@ class ViewController: UIViewController {
                         //Have parsed through all events
                         self.eventSpinner.stopAnimating()
                         if !self.eventOccuring {
-                            if let start = self.eventStart, let end = self.eventEnd {
-                                //This is the soonest event
-                                dateFormatter.dateFormat = "MMM d, yyyy"
-                                self.dateLabel.isHidden = false
-                                self.dateLabel.text = dateFormatter.string(from: start)
-                                self.dateLabel.sizeToFit()
-                                dateFormatter.dateFormat = "HH:mm"
-                                let startTime = dateFormatter.string(from: start)
-                                let endTime = dateFormatter.string(from: end)
-                                self.timeLabel.isHidden = false
-                                self.timeLabel.text = startTime + " - " + endTime
-                                self.timeLabel.sizeToFit()
-                                if let eventName = self.eventName {
-                                    self.eventInfo.text = eventName + " will occur"
-                                } else {
-                                    self.eventInfo.text = "The next event will occur"
-                                }
-                                self.eventInfo.sizeToFit()
-                                self.eventInfo.center.x = self.view.center.x
-                                self.dateLabel.center.x = self.view.center.x
-                                self.timeLabel.center.x = self.view.center.x
-                                //TODO: Don't enable if event is more than 24 hours out
-                                self.readyButton.isHidden = false
-                            } else {
-                                self.eventInfo.text = "There are no upcoming events"
-                                self.eventInfo.sizeToFit()
-                                self.eventInfo.center.x = self.view.center.x
-                            }
+                            self.displayEvent()
                         }
                         
                     case let .failure(error):
@@ -206,17 +173,16 @@ class ViewController: UIViewController {
         
         switch cameraPermissionStatus {
         case .authorized:
+            self.cameraAuthorized = true
             print("Already Authorized")
         case .denied:
+            self.cameraAuthorized = false
             print("denied")
-            
-            let alert = UIAlertController(title: "Sorry :(" , message: "But  could you please grant permission for camera within device settings",  preferredStyle: .alert)
-            let action = UIAlertAction(title: "Ok", style: .cancel,  handler: nil)
-            alert.addAction(action)
-            present(alert, animated: true, completion: nil)
-            
+            noCameraPermission()
         case .restricted:
+            self.cameraAuthorized = false
             print("restricted")
+            noCameraPermission()
         default:
             AVCaptureDevice.requestAccess(forMediaType: AVMediaTypeVideo, completionHandler: {
                 [weak self]
@@ -225,20 +191,13 @@ class ViewController: UIViewController {
                 if granted == true {
                     // User granted
                     print("User granted")
-                    DispatchQueue.main.async(){
-                        //Do smth that you need in main thread
-                    }
+                    self?.cameraAuthorized = true
                 }
                 else {
                     // User Rejected
                     print("User Rejected")
-                    
-                    DispatchQueue.main.async(){
-                        let alert = UIAlertController(title: "Camera Needed!" , message:  "The camera is the main feature of our application", preferredStyle: .alert)
-                        let action = UIAlertAction(title: "Ok", style: .cancel, handler: nil)
-                        alert.addAction(action)
-                        self?.present(alert, animated: true, completion: nil)  
-                    } 
+                    self?.cameraAuthorized = false
+                    self?.noCameraPermission()
                 }
             })
         }
@@ -247,22 +206,116 @@ class ViewController: UIViewController {
         
         switch locationPermissionStatus {
         case .notDetermined:
-            self.locationManager?.requestWhenInUseAuthorization()
+            self.manager?.requestWhenInUseAuthorization()
             break
         case .authorizedWhenInUse:
             print("Already authorized when in use")
+            self.locationAuthorized = true
             break
         case .denied:
             print("Denied location access")
+            self.locationAuthorized = false
+            self.noLocationPermission()
             break
         case .restricted:
             print("location access restricted")
+            self.locationAuthorized = false
+            self.noLocationPermission()
             break
         case .authorizedAlways:
             print("Always authorized")
+            self.locationAuthorized = true
             break
         }
     
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        if status == .denied || status == .restricted {
+            self.locationAuthorized = false
+            self.noLocationPermission()
+        } else if status == .authorizedAlways || status == .authorizedWhenInUse {
+            self.locationAuthorized = true
+        } else {
+            self.manager?.requestWhenInUseAuthorization()
+        }
+    }
+    
+    func displayEvent(){
+        if !self.cameraAuthorized || !self.locationAuthorized {
+            return
+        }
+        self.settingsButton.isHidden = true
+        if !self.eventOccuring {
+            if let start = self.eventStart, let end = self.eventEnd {
+                //This is the soonest event
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "MMM d, yyyy"
+                self.dateLabel.isHidden = false
+                self.dateLabel.text = dateFormatter.string(from: start)
+                self.dateLabel.sizeToFit()
+                dateFormatter.dateFormat = "HH:mm"
+                let startTime = dateFormatter.string(from: start)
+                let endTime = dateFormatter.string(from: end)
+                self.timeLabel.isHidden = false
+                self.timeLabel.text = startTime + " - " + endTime
+                self.timeLabel.sizeToFit()
+                if let eventName = self.eventName {
+                    self.eventInfo.text = eventName + " will occur"
+                } else {
+                    self.eventInfo.text = "The next event will occur"
+                }
+                self.eventInfo.sizeToFit()
+                self.eventInfo.center.x = self.view.center.x
+                self.dateLabel.center.x = self.view.center.x
+                self.timeLabel.center.x = self.view.center.x
+                //TODO: Don't enable if event is more than 24 hours out
+                self.readyButton.isHidden = false
+            } else {
+                self.eventInfo.text = "There are no upcoming events"
+                self.eventInfo.sizeToFit()
+                self.eventInfo.center.x = self.view.center.x
+            }
+        } else {
+            self.readyButton.isHidden = false
+            if let eventName = self.eventName {
+                self.eventInfo.text = eventName + " is currently running"
+                self.eventInfo.sizeToFit()
+            } else {
+                self.eventInfo.text = "There is currently an ongoing event. \nClick the button below to start taking pictures"
+                self.eventInfo.sizeToFit()
+            }
+            self.eventInfo.center.x = self.view.center.x
+        }
+
+    }
+    
+    func noCameraPermission() {
+        self.eventInfo.text = "CitizenSkyView need access to the camera"
+        self.eventInfo.isHidden = false
+        self.dateLabel.text = "Please enable camera access in settings"
+        self.dateLabel.isHidden = false
+        self.timeLabel.isHidden = true
+        self.eventInfo.sizeToFit()
+        self.dateLabel.sizeToFit()
+        self.eventInfo.center.x = self.view.center.x
+        self.dateLabel.center.x = self.view.center.x
+        self.readyButton.isHidden = true
+        self.settingsButton.isHidden = false
+    }
+    
+    func noLocationPermission() {
+        self.eventInfo.text = "CitizenSkyView need access your location"
+        self.eventInfo.isHidden = false
+        self.dateLabel.text = "Please enable location access in settings"
+        self.dateLabel.isHidden = false
+        self.timeLabel.isHidden = true
+        self.eventInfo.sizeToFit()
+        self.dateLabel.sizeToFit()
+        self.eventInfo.center.x = self.view.center.x
+        self.dateLabel.center.x = self.view.center.x
+        self.readyButton.isHidden = true
+        self.settingsButton.isHidden = false
     }
     
     
@@ -270,6 +323,13 @@ class ViewController: UIViewController {
         //Re check for events
         print("returned from event page")
         getEventsFromDynamoDB()
+    }
+    
+    @IBAction func goToSettings(){
+        if let appSettings = URL(string:UIApplicationOpenSettingsURLString){
+            UIApplication.shared.open(appSettings)
+        }
+        
     }
     
 
