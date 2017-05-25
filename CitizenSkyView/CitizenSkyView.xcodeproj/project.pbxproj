@@ -96,6 +96,7 @@
 		3F2B1EB41ECCEA1800A0A452 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				3FB1C6731ECA054B008B5C92 /* ViewController.swift */,
 				3F2B1EB51ECCEA8C00A0A452 /* ImageCaptureViewController.swift */,
 			);
 			name = Controllers;
@@ -128,7 +129,6 @@
 			children = (
 				3F2B1EB41ECCEA1800A0A452 /* Controllers */,
 				3FB1C6711ECA054B008B5C92 /* AppDelegate.swift */,
-				3FB1C6731ECA054B008B5C92 /* ViewController.swift */,
 				3FB1C6751ECA054B008B5C92 /* Main.storyboard */,
 				3FBA8FA51ECCA97700930C02 /* Models */,
 				3FB1C6781ECA054B008B5C92 /* Assets.xcassets */,

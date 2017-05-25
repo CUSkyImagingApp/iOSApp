@@ -72,7 +72,7 @@ class ViewController: UIViewController,  CLLocationManagerDelegate{
         
         getEventsFromDynamoDB()
         askPermission()
-
+        initCameraId()
         
     }
 
@@ -102,6 +102,26 @@ class ViewController: UIViewController,  CLLocationManagerDelegate{
     }
     
     //MARK: Actions
+    func initCameraId() -> Void {
+        let file = "cameraId.txt"
+        if let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
+            let path = dir.appendingPathComponent(file)
+            let fileManager = FileManager.default
+            if !fileManager.fileExists(atPath: path.path) {
+                let cameraId = UUID().uuidString
+                print("CameraId: " + cameraId)
+                do {
+                    try cameraId.write(to: path, atomically: false, encoding: String.Encoding.utf8)
+                }
+                catch {
+                    print("error writing camera id file")
+                }
+            } else {
+                print("camera id already assigned")
+            }
+        }
+    }
+    
     func refreshPage(notification: Notification) -> Void{
         print("refresh")
         getEventsFromDynamoDB()

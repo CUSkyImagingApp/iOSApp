@@ -42,6 +42,9 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
     var manager : CLLocationManager?
     var mostRecentLocation : CLLocation?
     
+    var cameraId : String?
+    var imageNumber = 0
+    
     
     @IBOutlet weak var timeRemaining : UILabel!
     @IBOutlet weak var countdownLabel : UILabel!
@@ -69,6 +72,19 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
         manager = CLLocationManager()
         manager?.delegate = self
         manager?.requestLocation()
+        
+        if let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
+            let path = dir.appendingPathComponent("cameraId.txt")
+            do {
+                let text = try String(contentsOf: path, encoding: String.Encoding.utf8)
+                self.cameraId = text
+                print("found camera id: " + self.cameraId!)
+            } catch {
+                print("error reading from camera id file. assigning new value")
+                self.cameraId = UUID().uuidString
+                print("New camera id: " + self.cameraId!)
+            }
+        }
         
         
         let device = AVCaptureDevice.defaultDevice(withMediaType: AVMediaTypeVideo)
@@ -225,7 +241,6 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
             print("error occure : \(error.localizedDescription)")
         }
         if let date = self.trueTimeClient?.referenceTime?.now() {
-            
             if  let sampleBuffer = photoSampleBuffer,
                 let previewBuffer = previewPhotoSampleBuffer,
                 let dataImage =  AVCapturePhotoOutput.jpegPhotoDataRepresentation(forJPEGSampleBuffer:  sampleBuffer, previewPhotoSampleBuffer: previewBuffer) {
@@ -266,10 +281,11 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
                 
                 let uploadRequest = AWSS3TransferManagerUploadRequest()
                 uploadRequest?.bucket = "cu-sky-imager"
-                uploadRequest?.key = dateString + ".jpg"
+                //Camera id is guarunteed to be not nil
+                uploadRequest?.key = cameraId! + "_" + String(imageNumber)
                 uploadRequest?.body = fileName
                 uploadRequest?.metadata = metadata
-                
+                imageNumber += 1
                 transferManager.upload(uploadRequest!).continueWith(executor: AWSExecutor.mainThread(), block: { (task:AWSTask<AnyObject>) -> Any? in
                     print("Uploaded")
                 })
