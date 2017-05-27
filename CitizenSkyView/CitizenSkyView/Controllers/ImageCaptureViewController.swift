@@ -238,7 +238,7 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
     func capture(_ captureOutput: AVCapturePhotoOutput, didFinishProcessingPhotoSampleBuffer photoSampleBuffer: CMSampleBuffer?, previewPhotoSampleBuffer: CMSampleBuffer?, resolvedSettings: AVCaptureResolvedPhotoSettings, bracketSettings: AVCaptureBracketedStillImageSettings?, error: Error?) {
         print("Image Captured")
         if let error = error {
-            print("error occure : \(error.localizedDescription)")
+            print("error : \(error.localizedDescription)")
         }
         if let date = self.trueTimeClient?.referenceTime?.now() {
             if  let sampleBuffer = photoSampleBuffer,
@@ -282,7 +282,7 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
                 let uploadRequest = AWSS3TransferManagerUploadRequest()
                 uploadRequest?.bucket = "cu-sky-imager"
                 //Camera id is guarunteed to be not nil
-                uploadRequest?.key = cameraId! + "_" + String(imageNumber)
+                uploadRequest?.key = cameraId! + "_" + dateString
                 uploadRequest?.body = fileName
                 uploadRequest?.metadata = metadata
                 imageNumber += 1
