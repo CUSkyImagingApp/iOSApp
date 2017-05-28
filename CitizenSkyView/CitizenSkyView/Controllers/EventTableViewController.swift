@@ -23,7 +23,7 @@ class EventTableViewController: UITableViewController {
     var dynamoDBObjectMapper : AWSDynamoDBObjectMapper?
     var trueTimeClient : TrueTimeClient?
     
-    var events : [Event] = [Event]()
+    var events = [[Event](), [Event](), [Event]()]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -48,15 +48,28 @@ class EventTableViewController: UITableViewController {
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        return 3
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return events.count
+        return events[section].count
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 80
+        return 75
+    }
+    
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        switch section {
+        case 0:
+            return "Future Events"
+        case 1:
+            return "Ongoing Events"
+        case 2:
+            return "Past Events"
+        default:
+            return "Events"
+        }
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -64,7 +77,7 @@ class EventTableViewController: UITableViewController {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as? EventTableViewCell else {
             fatalError("The dequeued cell is not an instance of MealTableViewCell.")
         }
-        let event = events[indexPath.row]
+        let event = events[indexPath.section][indexPath.row]
         if let eventName = event.EventName {
             cell.eventName.text = eventName
         } else {
@@ -97,10 +110,13 @@ class EventTableViewController: UITableViewController {
                     switch result {
                     case let .success(referenceTime):
                         let now = referenceTime.now()
-                        print(paginatedOutput.items.count)
                         for event in paginatedOutput.items as! [Event]{
-                            event.populateCustomVars()
-                            self.events += [event]
+                            event.populateCustomVars(now: now)
+                            guard let eventRef = event.eventRef else {
+                                print("unknown event ref")
+                                return
+                            }
+                            self.events[eventRef] += [event]
                         }
                         self.tableView.reloadData()
                     case let .failure(error):

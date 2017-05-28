@@ -19,6 +19,7 @@ class Event : AWSDynamoDBObjectModel, AWSDynamoDBModeling {
     var endDate : Date?
     var dateString : String?
     var timeString : String?
+    var eventRef : Int?
     
     class func dynamoDBTableName() -> String {
         return "Event"
@@ -28,7 +29,7 @@ class Event : AWSDynamoDBObjectModel, AWSDynamoDBModeling {
         return "EventName"
     }
     
-    func populateCustomVars(){
+    func populateCustomVars(now: Date){
         //Date creation
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
@@ -78,6 +79,24 @@ class Event : AWSDynamoDBObjectModel, AWSDynamoDBModeling {
             self.timeString = stime + " - " + etime
         } else {
             print("unable to create datestring because startDate or endDate is nil")
+        }
+        
+        //Determine past present or future event
+        if let end = endDate, let start = startDate {
+            if start < now {
+                if end < now {
+                    //past event
+                    eventRef = 2
+                } else {
+                    //current event
+                    eventRef = 1
+                }
+            } else {
+                //future event
+                eventRef = 0
+            }
+        } else {
+            print("unable to get start and end date")
         }
     }
     
