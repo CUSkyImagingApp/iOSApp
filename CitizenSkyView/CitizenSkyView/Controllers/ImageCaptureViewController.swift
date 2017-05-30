@@ -35,15 +35,14 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
     var onCoundownSeconds = false
     var secondsTilStart : TimeInterval?
     
-    var eventStart : Date?
-    var eventEnd : Date?
-    var eventHappening = false
-    
     var manager : CLLocationManager?
     var mostRecentLocation : CLLocation?
     
     var cameraId : String?
     var imageNumber = 0
+    
+    var event : Event?
+    var eventHappening = false
     
     
     @IBOutlet weak var timeRemaining : UILabel!
@@ -53,6 +52,16 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        guard let event = self.event else {
+            fatalError("Expected event")
+        }
+        if let eventKey = event.eventRef {
+            if eventKey == 2 {
+                //Event is in the past. Don't set anything up
+                pastEvent()
+                return
+            }
+        }
         credentialProvider = AWSCognitoCredentialsProvider(regionType:.USWest2,
                                                            identityPoolId:"us-west-2:43473766-619f-4209-996b-7dc61e65ccf1")
         configuration = AWSServiceConfiguration(region:.USWest2, credentialsProvider:credentialProvider)
@@ -100,7 +109,7 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
                     
                     self.onThirtySecondTimer = false
                     if let now = self.trueTimeClient?.referenceTime?.now() {
-                        if let start = self.eventStart, let end = self.eventEnd {
+                        if let start = event.startDate, let end = event.endDate {
                             if now > start && now < end {
                                 print("Event Started")
                                 self.timeRemaining.isHidden = true
@@ -149,8 +158,19 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
     }
     
     
+    func pastEvent() {
+        self.countdownLabel.text = "Event has finished"
+        self.countdownLabel.sizeToFit()
+        self.countdownLabel.center.x = self.view.center.x
+        self.centerText.isHidden = true
+        self.timeRemaining.isHidden = true
+    }
+    
     func startCountdown(){
-        if let datetime = self.trueTimeClient?.referenceTime?.now(), let start = self.eventStart {
+        guard let event = self.event else {
+            fatalError("Expected Event")
+        }
+        if let datetime = self.trueTimeClient?.referenceTime?.now(), let start = event.startDate {
             let diff = start.timeIntervalSince(datetime)
             print(diff)
             self.secondsTilStart = diff
@@ -169,6 +189,9 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
     }
     
     func updateCountdown(){
+        guard let event = self.event else {
+            fatalError("Expected Event")
+        }
         //Change structure to check for image capture first
         if self.eventHappening {
             //Image capture has started, hide countdown
@@ -176,8 +199,8 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
             self.countdownLabel.isHidden = true
             self.timeRemaining.isHidden = true
         } else {
-            if let curr = self.trueTimeClient?.referenceTime?.now(){
-                self.secondsTilStart = self.eventStart!.timeIntervalSince(curr)
+            if let curr = self.trueTimeClient?.referenceTime?.now(), let start = event.startDate{
+                self.secondsTilStart = start.timeIntervalSince(curr)
                 self.timeRemaining.text = timeString(time: self.secondsTilStart!)
                 self.timeRemaining.sizeToFit()
                 self.timeRemaining.center.x = self.view.center.x
@@ -209,6 +232,9 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
     
     
     func takePicture(){
+        guard let event = self.event else {
+            fatalError("Expected Event")
+        }
         self.eventHappening = true
         if !onThirtySecondTimer {
             self.timer = Timer.scheduledTimer(timeInterval: 30, target: self, selector: (#selector(ImageCaptureViewController.takePicture)), userInfo: nil, repeats: true)
@@ -224,8 +250,8 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
         ]
         settings.previewPhotoFormat = previewFormat
         cameraOutput.capturePhoto(with: settings, delegate: self)
-        if let now = self.trueTimeClient?.referenceTime?.now() {
-            if now > self.eventEnd! {
+        if let now = self.trueTimeClient?.referenceTime?.now(), let end = event.endDate {
+            if now > end {
                 //Event is over!
                 self.timer.invalidate()
                 self.centerText.text = "Event complete!"

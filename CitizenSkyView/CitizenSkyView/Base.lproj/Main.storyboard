@@ -52,6 +52,7 @@
                                     <outlet property="eventDate" destination="wnS-N5-OFT" id="TZd-1m-kwv"/>
                                     <outlet property="eventName" destination="Qu9-0r-imq" id="gAY-yI-kCs"/>
                                     <outlet property="eventTime" destination="JG8-G2-FUb" id="NNa-C5-yDh"/>
+                                    <segue destination="t1e-li-Vlu" kind="show" identifier="EventSegue" id="gAS-qB-6Zk"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -61,79 +62,40 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" id="vn2-yt-XJW"/>
+                    <connections>
+                        <segue destination="K6l-9R-kIq" kind="presentation" identifier="PermissionsSegue" customClass="PermissionsStoryboardSegue" customModule="CitizenSkyView" customModuleProvider="target" id="DGh-W2-hhd"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="jec-2S-cgD" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="55.200000000000003" y="34.632683658170919"/>
         </scene>
-        <!--View Controller-->
-        <scene sceneID="tne-QT-ifu">
+        <!--Permissions View Controller-->
+        <scene sceneID="e0n-sY-HTD">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="CitizenSkyView" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="K6l-9R-kIq" customClass="PermissionsViewController" customModule="CitizenSkyView" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
-                        <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
+                        <viewControllerLayoutGuide type="top" id="vfH-3e-0Wn"/>
+                        <viewControllerLayoutGuide type="bottom" id="TBy-1j-6x2"/>
                     </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                    <view key="view" alpha="0.5" contentMode="scaleToFill" id="pJB-pm-MxR">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="Pl9-W3-b5n">
-                                <rect key="frame" x="178" y="207" width="20" height="20"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            </activityIndicatorView>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ozs-qT-55z">
-                                <rect key="frame" x="149" y="595" width="89" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Ready to Go!"/>
-                                <connections>
-                                    <segue destination="t1e-li-Vlu" kind="show" identifier="InitiateEvent" id="7oV-pZ-dtg"/>
-                                </connections>
-                            </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Searching for Upcoming Events" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xL2-4f-Cgi">
-                                <rect key="frame" x="68" y="235" width="241" height="21"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Time" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1KH-3d-fe2">
-                                <rect key="frame" x="168" y="353" width="38" height="21"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Permissions View" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="sqa-DL-GyW">
+                                <rect key="frame" x="121" y="298" width="134" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Date" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hkd-Qd-Dik">
-                                <rect key="frame" x="167" y="289" width="36" height="21"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="JV6-G4-Peb">
-                                <rect key="frame" x="139" y="382" width="98" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Go to Settings"/>
-                                <connections>
-                                    <action selector="goToSettings" destination="BYZ-38-t0r" eventType="touchUpInside" id="Ff9-TU-add"/>
-                                </connections>
-                            </button>
                         </subviews>
-                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
-                    <connections>
-                        <outlet property="dateLabel" destination="hkd-Qd-Dik" id="u3l-1P-P67"/>
-                        <outlet property="eventInfo" destination="xL2-4f-Cgi" id="RRE-eG-Dzz"/>
-                        <outlet property="eventSpinner" destination="Pl9-W3-b5n" id="Cpb-GX-w6e"/>
-                        <outlet property="readyButton" destination="Ozs-qT-55z" id="w5A-9O-SjJ"/>
-                        <outlet property="settingsButton" destination="JV6-G4-Peb" id="alb-NW-52q"/>
-                        <outlet property="timeLabel" destination="1KH-3d-fe2" id="ans-wS-kN3"/>
-                    </connections>
                 </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="su7-4p-XI5" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="972" y="37.331334332833585"/>
+            <point key="canvasLocation" x="1028" y="794"/>
         </scene>
         <!--Image Capture View Controller-->
         <scene sceneID="cCX-HM-8u1">
@@ -155,28 +117,19 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Event starts in " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JNE-5E-JpN">
-                                <rect key="frame" x="131" y="29" width="114" height="21"/>
+                                <rect key="frame" x="130" y="119" width="114" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="00:00:00" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="L8A-pu-OGs">
-                                <rect key="frame" x="151" y="90" width="72" height="21"/>
+                                <rect key="frame" x="151" y="148" width="72" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7Av-mx-l9L">
-                                <rect key="frame" x="16" y="29" width="34" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Back"/>
-                                <connections>
-                                    <action selector="returnToMainPage" destination="t1e-li-Vlu" eventType="touchUpInside" id="q62-G8-mLh"/>
-                                    <segue destination="pll-kD-SU8" kind="unwind" unwindAction="returnFromEventWithSegue:" id="9pv-cn-4GT"/>
-                                </connections>
-                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
@@ -187,9 +140,8 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="IKq-Qc-zqW" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <exit id="pll-kD-SU8" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="2020" y="36.431784107946029"/>
+            <point key="canvasLocation" x="1028" y="35"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="QpZ-5t-dXL">

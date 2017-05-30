@@ -38,7 +38,7 @@ class EventTableViewController: UITableViewController {
         trueTimeClient?.start()
         
         getEventsFromDynamoDB()
-
+        askPermission()
         
     }
     
@@ -96,6 +96,38 @@ class EventTableViewController: UITableViewController {
         return cell
     }
     
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        super.prepare(for: segue, sender: sender)
+        if segue.identifier == "PermissionsSegue" {
+            print("PermissionsSegue")
+        } else if segue.identifier == "EventSegue" {
+            guard let imageCaptureViewController = segue.destination as? ImageCaptureViewController else {
+                fatalError("Unexpected destination: \(segue.destination)")
+            }
+            guard let selectedEventCell = sender as? EventTableViewCell else {
+                fatalError("Unexpected sender: \(String(describing: sender))")
+            }
+            guard let indexPath = tableView.indexPath(for: selectedEventCell) else {
+                fatalError("The selected cell is not being displayed by the table")
+            }
+            let selectedEvent = events[indexPath.section][indexPath.row]
+            imageCaptureViewController.event = selectedEvent
+        }
+
+    }
+    
+    //Lock to portrait mode
+    open override var shouldAutorotate: Bool {
+        get {
+            return false
+        }
+    }
+    open override var supportedInterfaceOrientations: UIInterfaceOrientationMask{
+        get {
+            return .portrait
+        }
+    }
+    
     func getEventsFromDynamoDB() {
         let scanExpression = AWSDynamoDBScanExpression()
         scanExpression.limit = 20
@@ -131,5 +163,64 @@ class EventTableViewController: UITableViewController {
         })
         
     }
+    
+    // This method you can use somewhere you need to know camera permission   state
+    func askPermission() {
+        let cameraPermissionStatus =  AVCaptureDevice.authorizationStatus(forMediaType: AVMediaTypeVideo)
+        
+        switch cameraPermissionStatus {
+        case .authorized:
+            print("Already Authorized")
+        case .denied:
+            showPermissionsModal()
+            print("denied")
+        case .restricted:
+            showPermissionsModal()
+            print("restricted")
+        default:
+            AVCaptureDevice.requestAccess(forMediaType: AVMediaTypeVideo, completionHandler: {
+                [weak self]
+                (granted :Bool) -> Void in
+                
+                if granted == true {
+                    // User granted
+                    print("User granted")
+
+                }
+                else {
+                    // User Rejected
+                    print("User Rejected")
+
+                }
+            })
+        }
+        
+        let locationPermissionStatus = CLLocationManager.authorizationStatus()
+        
+        switch locationPermissionStatus {
+        case .notDetermined:
+            break
+        case .authorizedWhenInUse:
+            print("Already authorized when in use")
+            break
+        case .denied:
+            showPermissionsModal()
+            print("Denied location access")
+            break
+        case .restricted:
+            showPermissionsModal()
+            print("location access restricted")
+            break
+        case .authorizedAlways:
+            print("Always authorized")
+            break
+        }
+        
+    }
+    
+    func showPermissionsModal() -> Void {
+        performSegue(withIdentifier: "PermissionsSegue", sender: self)
+    }
+    
     
 }

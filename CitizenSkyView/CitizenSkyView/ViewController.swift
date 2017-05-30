@@ -82,12 +82,7 @@ class ViewController: UIViewController,  CLLocationManagerDelegate{
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "InitiateEvent" {
-            if let destination = segue.destination as? ImageCaptureViewController {
-                destination.eventStart = self.eventStart
-                destination.eventEnd = self.eventEnd
-            }
-        }
+
     }
     //Lock to portrait mode
     open override var shouldAutorotate: Bool {
