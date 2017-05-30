@@ -167,60 +167,31 @@ class EventTableViewController: UITableViewController {
     // This method you can use somewhere you need to know camera permission   state
     func askPermission() {
         let cameraPermissionStatus =  AVCaptureDevice.authorizationStatus(forMediaType: AVMediaTypeVideo)
-        
-        switch cameraPermissionStatus {
-        case .authorized:
-            print("Already Authorized")
-        case .denied:
+        if cameraPermissionStatus == .authorized {
+            print("Camera Already Authorized")
+        } else {
             showPermissionsModal()
-            print("denied")
-        case .restricted:
-            showPermissionsModal()
-            print("restricted")
-        default:
-            AVCaptureDevice.requestAccess(forMediaType: AVMediaTypeVideo, completionHandler: {
-                [weak self]
-                (granted :Bool) -> Void in
-                
-                if granted == true {
-                    // User granted
-                    print("User granted")
-
-                }
-                else {
-                    // User Rejected
-                    print("User Rejected")
-
-                }
-            })
+            return
         }
         
         let locationPermissionStatus = CLLocationManager.authorizationStatus()
-        
-        switch locationPermissionStatus {
-        case .notDetermined:
-            break
-        case .authorizedWhenInUse:
-            print("Already authorized when in use")
-            break
-        case .denied:
+        if locationPermissionStatus == .authorizedAlways || locationPermissionStatus == .authorizedWhenInUse {
+            print("Location Already Authorized")
+        } else {
             showPermissionsModal()
-            print("Denied location access")
-            break
-        case .restricted:
-            showPermissionsModal()
-            print("location access restricted")
-            break
-        case .authorizedAlways:
-            print("Always authorized")
-            break
         }
         
+        
     }
+    
+
     
     func showPermissionsModal() -> Void {
         performSegue(withIdentifier: "PermissionsSegue", sender: self)
     }
     
+    @IBAction func unwindToEventTable(segue: UIStoryboardSegue) {
+        
+    }
     
 }
