@@ -23,6 +23,8 @@ class EventTableViewController: UITableViewController {
     var dynamoDBObjectMapper : AWSDynamoDBObjectMapper?
     var trueTimeClient : TrueTimeClient?
     
+    var hasPermissions = false
+    
     var events = [[Event](), [Event](), [Event]()]
     
     override func viewDidLoad() {
@@ -38,7 +40,7 @@ class EventTableViewController: UITableViewController {
         trueTimeClient?.start()
         
         getEventsFromDynamoDB()
-        askPermission()
+        hasPermissions = askPermission()
         
     }
     
@@ -98,9 +100,7 @@ class EventTableViewController: UITableViewController {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         super.prepare(for: segue, sender: sender)
-        if segue.identifier == "PermissionsSegue" {
-            print("PermissionsSegue")
-        } else if segue.identifier == "EventSegue" {
+        if segue.identifier == "EventSegue" {
             guard let imageCaptureViewController = segue.destination as? ImageCaptureViewController else {
                 fatalError("Unexpected destination: \(segue.destination)")
             }
@@ -114,6 +114,18 @@ class EventTableViewController: UITableViewController {
             imageCaptureViewController.event = selectedEvent
         }
 
+    }
+    override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
+        if identifier == "EventSegue" {
+            if self.askPermission() {
+                return true
+            } else {
+                self.showPermissionsModal()
+                return false
+            }
+        } else {
+            return true
+        }
     }
     
     //Lock to portrait mode
@@ -165,23 +177,28 @@ class EventTableViewController: UITableViewController {
     }
     
     // This method you can use somewhere you need to know camera permission   state
-    func askPermission() {
+    func askPermission() -> Bool{
+        var hasCameraPermission = false
+        var hasLocationPermission = false
         let cameraPermissionStatus =  AVCaptureDevice.authorizationStatus(forMediaType: AVMediaTypeVideo)
         if cameraPermissionStatus == .authorized {
-            print("Camera Already Authorized")
+            hasCameraPermission = true
         } else {
-            showPermissionsModal()
-            return
+            hasCameraPermission = false
         }
         
         let locationPermissionStatus = CLLocationManager.authorizationStatus()
         if locationPermissionStatus == .authorizedAlways || locationPermissionStatus == .authorizedWhenInUse {
-            print("Location Already Authorized")
+            hasLocationPermission = true
         } else {
-            showPermissionsModal()
+            hasLocationPermission = false
         }
         
-        
+        if !hasLocationPermission || !hasCameraPermission {
+            return false
+        } else {
+            return true
+        }
     }
     
 

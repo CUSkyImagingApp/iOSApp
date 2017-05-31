@@ -16,10 +16,10 @@ class PermissionsStoryboardSegue : UIStoryboardSegue {
         let slideView = destination.view
         
         source.view.addSubview(slideView!)
-        slideView?.transform = CGAffineTransform(translationX: source.view.frame.size.width, y: 0)
+        slideView?.transform = CGAffineTransform(translationX: 0, y: source.view.frame.size.height)
         
-        UIView.animate(withDuration: 0.25,
-                       delay: 0.0,
+        UIView.animate(withDuration: 1,
+                       delay: 0.5,
                        options: UIViewAnimationOptions.curveEaseInOut,
                        animations: {
                         slideView?.transform = CGAffineTransform.identity

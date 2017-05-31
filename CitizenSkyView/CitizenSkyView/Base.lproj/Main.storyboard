@@ -63,7 +63,7 @@
                     </tableView>
                     <navigationItem key="navigationItem" id="vn2-yt-XJW"/>
                     <connections>
-                        <segue destination="K6l-9R-kIq" kind="presentation" identifier="PermissionsSegue" customClass="PermissionsStoryboardSegue" customModule="CitizenSkyView" customModuleProvider="target" id="DGh-W2-hhd"/>
+                        <segue destination="bhp-vM-DfZ" kind="presentation" identifier="PermissionsSegue" customClass="PermissionsStoryboardSegue" customModule="CitizenSkyView" customModuleProvider="target" id="DGh-W2-hhd"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="jec-2S-cgD" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -82,31 +82,39 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Why does CitizenSkyView need my location?" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OPG-0d-Bi5">
-                                <rect key="frame" x="17" y="338" width="342" height="21"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="CitizenSkyView needs to access your camera and location information to function. Please enable these in settings" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="5" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="sqa-DL-GyW">
+                                <rect key="frame" x="17" y="123" width="342" height="129"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="6" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4ab-Lu-aYJ">
-                                <rect key="frame" x="17" y="336" width="342" height="209"/>
+                                <rect key="frame" x="17" y="469" width="342" height="128"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <string key="text">CitizenSkyView needs your location once when an event has started. This information is critical when the cloud data is processed, so that scientists can stitch image sequences together. </string>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <fontDescription key="fontDescription" type="system" weight="ultraLight" pointSize="15"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="B1x-Dd-pJ1">
-                                <rect key="frame" x="139" y="211" width="98" height="30"/>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="B1x-Dd-pJ1">
+                                <rect key="frame" x="115" y="309" width="146" height="48"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Go to Settings"/>
+                                <color key="backgroundColor" red="0.37816104290000002" green="0.74837535619999995" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <state key="normal" title="Go to Settings">
+                                    <color key="titleShadowColor" red="0.67800761010362698" green="0.67800761010362698" blue="0.67800761010362698" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                </state>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                        <integer key="value" value="5"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
                                 <connections>
                                     <action selector="goToSettings" destination="K6l-9R-kIq" eventType="touchUpInside" id="Ixd-DS-oxK"/>
                                 </connections>
                             </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Permissions View" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="5" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="sqa-DL-GyW">
-                                <rect key="frame" x="17" y="74" width="342" height="129"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Why does CitizenSkyView need my location?" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OPG-0d-Bi5">
+                                <rect key="frame" x="17" y="425" width="342" height="64"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
@@ -115,6 +123,7 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
+                    <navigationItem key="navigationItem" id="Nk9-M5-NK6"/>
                     <connections>
                         <outlet property="locDetailBody" destination="4ab-Lu-aYJ" id="JQG-kf-MBR"/>
                         <outlet property="locDetailHeading" destination="OPG-0d-Bi5" id="KXQ-M2-Bkb"/>
@@ -125,7 +134,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="su7-4p-XI5" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="nSZ-wY-ClS" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="1028" y="793.8530734632684"/>
+            <point key="canvasLocation" x="1967.2" y="793.8530734632684"/>
         </scene>
         <!--Image Capture View Controller-->
         <scene sceneID="cCX-HM-8u1">
@@ -178,9 +187,10 @@
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="cRQ-yV-SyL" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="Hlr-zI-zqi">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="Hlr-zI-zqi">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <color key="barTintColor" red="0.37816104292869568" green="0.74837535619735718" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
@@ -190,6 +200,25 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Y1O-uk-pR4" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-884" y="34.632683658170919"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="fEe-ME-yEl">
+            <objects>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="N67-mj-aht" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="bhp-vM-DfZ" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="s8h-50-Ke2">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <color key="barTintColor" red="0.37816104290000002" green="0.74837535619999995" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="K6l-9R-kIq" kind="relationship" relationship="rootViewController" id="nIx-vw-0n7"/>
+                    </connections>
+                </navigationController>
+            </objects>
+            <point key="canvasLocation" x="1028" y="793.8530734632684"/>
         </scene>
     </scenes>
 </document>
