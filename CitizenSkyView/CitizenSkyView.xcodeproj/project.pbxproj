@@ -19,6 +19,7 @@
 		3FF89F7A1ED8D3FE001F37A0 /* EventTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FF89F791ED8D3FE001F37A0 /* EventTableViewController.swift */; };
 		3FF89F7C1ED8D594001F37A0 /* EventTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FF89F7B1ED8D594001F37A0 /* EventTableViewCell.swift */; };
 		3FF89F7E1EDA7E43001F37A0 /* PermissionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FF89F7D1EDA7E43001F37A0 /* PermissionsViewController.swift */; };
+		3FF89F821EDE4CEF001F37A0 /* PermissionsStoryboardSegue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FF89F811EDE4CEF001F37A0 /* PermissionsStoryboardSegue.swift */; };
 		6450C231DC05C7CA1FF34A6A /* Pods_CitizenSkyViewTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD0CEE6E51B451F5BA7FC345 /* Pods_CitizenSkyViewTests.framework */; };
 		729001175A25330CA6920E7E /* Pods_CitizenSkyViewUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C148ED2AD39A59B52A39D2A /* Pods_CitizenSkyViewUITests.framework */; };
 		77138299B88379DEF2BAB43E /* Pods_CitizenSkyView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CDC52DA689257D17E081018 /* Pods_CitizenSkyView.framework */; };
@@ -63,6 +64,7 @@
 		3FF89F791ED8D3FE001F37A0 /* EventTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = EventTableViewController.swift; path = Controllers/EventTableViewController.swift; sourceTree = "<group>"; };
 		3FF89F7B1ED8D594001F37A0 /* EventTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = EventTableViewCell.swift; path = Controllers/EventTableViewCell.swift; sourceTree = "<group>"; };
 		3FF89F7D1EDA7E43001F37A0 /* PermissionsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PermissionsViewController.swift; path = Controllers/PermissionsViewController.swift; sourceTree = "<group>"; };
+		3FF89F811EDE4CEF001F37A0 /* PermissionsStoryboardSegue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PermissionsStoryboardSegue.swift; path = Controllers/PermissionsStoryboardSegue.swift; sourceTree = "<group>"; };
 		4CDC52DA689257D17E081018 /* Pods_CitizenSkyView.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CitizenSkyView.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		79B3309A994AF913712F861F /* Pods-CitizenSkyViewTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CitizenSkyViewTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-CitizenSkyViewTests/Pods-CitizenSkyViewTests.debug.xcconfig"; sourceTree = "<group>"; };
 		B7842480048AD0FD5874A9E0 /* Pods-CitizenSkyView.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CitizenSkyView.release.xcconfig"; path = "Pods/Target Support Files/Pods-CitizenSkyView/Pods-CitizenSkyView.release.xcconfig"; sourceTree = "<group>"; };
@@ -102,6 +104,7 @@
 		3F2B1EB41ECCEA1800A0A452 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				3FF89F811EDE4CEF001F37A0 /* PermissionsStoryboardSegue.swift */,
 				3FF89F7B1ED8D594001F37A0 /* EventTableViewCell.swift */,
 				3FF89F791ED8D3FE001F37A0 /* EventTableViewController.swift */,
 				3FF89F7D1EDA7E43001F37A0 /* PermissionsViewController.swift */,
@@ -481,6 +484,7 @@
 			files = (
 				3FF89F7E1EDA7E43001F37A0 /* PermissionsViewController.swift in Sources */,
 				3FF89F7C1ED8D594001F37A0 /* EventTableViewCell.swift in Sources */,
+				3FF89F821EDE4CEF001F37A0 /* PermissionsStoryboardSegue.swift in Sources */,
 				3FB1C6741ECA054B008B5C92 /* ViewController.swift in Sources */,
 				3FD7A7761ECCAA580074DD99 /* Event.swift in Sources */,
 				3F2B1EB61ECCEA8C00A0A452 /* ImageCaptureViewController.swift in Sources */,

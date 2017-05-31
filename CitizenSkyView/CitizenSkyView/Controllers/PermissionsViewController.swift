@@ -100,4 +100,8 @@ class PermissionsViewController : UIViewController, CLLocationManagerDelegate {
         }
     }
     
+    @IBAction func goToEvents() {
+        performSegue(withIdentifier: "BackToEventTableSegue", sender: self)
+    }
+    
 }

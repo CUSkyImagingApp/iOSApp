@@ -123,7 +123,18 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
-                    <navigationItem key="navigationItem" id="Nk9-M5-NK6"/>
+                    <navigationItem key="navigationItem" id="Nk9-M5-NK6">
+                        <barButtonItem key="leftBarButtonItem" style="plain" id="A6P-pp-AhB">
+                            <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="cao-IL-23T">
+                                <rect key="frame" x="16" y="7" width="83" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Back"/>
+                                <connections>
+                                    <action selector="goToEvents" destination="K6l-9R-kIq" eventType="touchUpInside" id="Jzk-Nm-yZM"/>
+                                </connections>
+                            </button>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="locDetailBody" destination="4ab-Lu-aYJ" id="JQG-kf-MBR"/>
                         <outlet property="locDetailHeading" destination="OPG-0d-Bi5" id="KXQ-M2-Bkb"/>
