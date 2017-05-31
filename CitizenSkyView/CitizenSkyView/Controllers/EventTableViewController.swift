@@ -100,6 +100,7 @@ class EventTableViewController: UITableViewController {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         super.prepare(for: segue, sender: sender)
+        print("Here")
         if segue.identifier == "EventSegue" {
             guard let imageCaptureViewController = segue.destination as? ImageCaptureViewController else {
                 fatalError("Unexpected destination: \(segue.destination)")
@@ -117,16 +118,17 @@ class EventTableViewController: UITableViewController {
     }
     override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
         if identifier == "EventSegue" {
-            if self.askPermission() {
+            if askPermission() {
                 return true
             } else {
-                self.showPermissionsModal()
+                showPermissionsModal()
                 return false
             }
         } else {
             return true
         }
     }
+
     
     //Lock to portrait mode
     open override var shouldAutorotate: Bool {
@@ -201,14 +203,9 @@ class EventTableViewController: UITableViewController {
         }
     }
     
-
-    
-    func showPermissionsModal() -> Void {
+    func showPermissionsModal() {
         performSegue(withIdentifier: "PermissionsSegue", sender: self)
     }
-    
-    @IBAction func unwindToEventTable(segue: UIStoryboardSegue) {
-        
-    }
+
     
 }

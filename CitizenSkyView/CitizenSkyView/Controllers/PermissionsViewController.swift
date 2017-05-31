@@ -42,7 +42,7 @@ class PermissionsViewController : UIViewController, CLLocationManagerDelegate {
             locDetailBody.isHidden = false
             locDetailHeading.isHidden = false
         } else {
-            self.performSegue(withIdentifier: "BackToEventTableSegue", sender: self)
+            self.performSegue(withIdentifier: "EventSegue", sender: self)
         }
 
         
@@ -100,8 +100,5 @@ class PermissionsViewController : UIViewController, CLLocationManagerDelegate {
         }
     }
     
-    @IBAction func goToEvents() {
-        performSegue(withIdentifier: "BackToEventTableSegue", sender: self)
-    }
     
 }
