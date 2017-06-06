@@ -63,7 +63,7 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
             }
         }
         credentialProvider = AWSCognitoCredentialsProvider(regionType:.USWest2,
-                                                           identityPoolId:"us-west-2:43473766-619f-4209-996b-7dc61e65ccf1")
+                                                           identityPoolId:"us-west-2:xxxxxxx")
         configuration = AWSServiceConfiguration(region:.USWest2, credentialsProvider:credentialProvider)
         AWSServiceManager.default().defaultServiceConfiguration = configuration
         transferManager = AWSS3TransferManager.default()
@@ -306,14 +306,29 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
                 
                 
                 let uploadRequest = AWSS3TransferManagerUploadRequest()
-                uploadRequest?.bucket = "cu-sky-imager"
+                uploadRequest?.bucket = "citizenskyview"
                 //Camera id is guarunteed to be not nil
                 uploadRequest?.key = cameraId! + "_" + dateString
                 uploadRequest?.body = fileName
                 uploadRequest?.metadata = metadata
                 imageNumber += 1
                 transferManager.upload(uploadRequest!).continueWith(executor: AWSExecutor.mainThread(), block: { (task:AWSTask<AnyObject>) -> Any? in
-                    print("Uploaded")
+                    if let error = task.error as NSError? {
+                        if error.domain == AWSS3TransferManagerErrorDomain, let code = AWSS3TransferManagerErrorType(rawValue: error.code) {
+                            switch code {
+                            case .cancelled, .paused:
+                                break
+                            default:
+                                print("Error uploading: \(String(describing: uploadRequest?.key)) Error: \(error)")
+                            }
+                        } else {
+                            print("Error uploading: \(String(describing: uploadRequest?.key)) Error: \(error)")
+                        }
+                        return nil
+                    }
+                    
+                    print("Upload complete for: \(String(describing: uploadRequest?.key))")
+                    return nil
                 })
 
             } else {

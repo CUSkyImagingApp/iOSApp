@@ -27,11 +27,19 @@ class EventTableViewController: UITableViewController {
     
     var events = [[Event](), [Event](), [Event]()]
     
+    let refreshNotification = Notification.Name(rawValue: "refresh")
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        guard let dictionary = Bundle.main.infoDictionary else {
+            fatalError("Found no configuration")
+        }
+        guard let identityPoolId = dictionary["AWS_COGNITO_IDENTITY"] else{
+            fatalError("Found no configuration for AWS_COGNITO_IDENTITY")
+        }
+        print(identityPoolId)
         credentialProvider = AWSCognitoCredentialsProvider(regionType:.USWest2,
-                                                           identityPoolId:"us-west-2:43473766-619f-4209-996b-7dc61e65ccf1")
+                                                           identityPoolId:identityPoolId as! String)
         configuration = AWSServiceConfiguration(region:.USWest2, credentialsProvider:credentialProvider)
         AWSServiceManager.default().defaultServiceConfiguration = configuration
         dynamoDBObjectMapper = AWSDynamoDBObjectMapper.default()
@@ -39,7 +47,11 @@ class EventTableViewController: UITableViewController {
         trueTimeClient = TrueTimeClient.sharedInstance
         trueTimeClient?.start()
         
+        let nc = NotificationCenter.default
+        nc.addObserver(forName: refreshNotification, object: nil, queue: nil, using: refreshPage)
+        
         getEventsFromDynamoDB()
+        initCameraId()
         hasPermissions = askPermission()
         
     }
@@ -145,6 +157,10 @@ class EventTableViewController: UITableViewController {
     func getEventsFromDynamoDB() {
         let scanExpression = AWSDynamoDBScanExpression()
         scanExpression.limit = 20
+        //Clear events
+        for index in 0...self.events.count-1 {
+            self.events[index].removeAll()
+        }
         dynamoDBObjectMapper?.scan(Event.self, expression: scanExpression).continueWith(block: {(task:AWSTask<AWSDynamoDBPaginatedOutput>) -> Any? in
             if let error = task.error as NSError? {
                 print("The request failed. Error \(error)")
@@ -205,6 +221,31 @@ class EventTableViewController: UITableViewController {
     
     func showPermissionsModal() {
         performSegue(withIdentifier: "PermissionsSegue", sender: self)
+    }
+    
+    func initCameraId() -> Void {
+        let file = "cameraId.txt"
+        if let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
+            let path = dir.appendingPathComponent(file)
+            let fileManager = FileManager.default
+            if !fileManager.fileExists(atPath: path.path) {
+                let cameraId = UUID().uuidString
+                print("CameraId: " + cameraId)
+                do {
+                    try cameraId.write(to: path, atomically: false, encoding: String.Encoding.utf8)
+                }
+                catch {
+                    print("error writing camera id file")
+                }
+            } else {
+                print("camera id already assigned")
+            }
+        }
+    }
+    
+    func refreshPage(notification: Notification) -> Void{
+        getEventsFromDynamoDB()
+        hasPermissions = askPermission()
     }
 
     
