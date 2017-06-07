@@ -37,7 +37,6 @@ class EventTableViewController: UITableViewController {
         guard let identityPoolId = dictionary["AWS_COGNITO_IDENTITY"] else{
             fatalError("Found no configuration for AWS_COGNITO_IDENTITY")
         }
-        print(identityPoolId)
         credentialProvider = AWSCognitoCredentialsProvider(regionType:.USWest2,
                                                            identityPoolId:identityPoolId as! String)
         configuration = AWSServiceConfiguration(region:.USWest2, credentialsProvider:credentialProvider)

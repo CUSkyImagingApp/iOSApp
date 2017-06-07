@@ -55,6 +55,12 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
         guard let event = self.event else {
             fatalError("Expected event")
         }
+        guard let dictionary = Bundle.main.infoDictionary else {
+            fatalError("Found no configuration")
+        }
+        guard let identityPoolId = dictionary["AWS_COGNITO_IDENTITY"] else{
+            fatalError("Found no configuration for AWS_COGNITO_IDENTITY")
+        }
         if let eventKey = event.eventRef {
             if eventKey == 2 {
                 //Event is in the past. Don't set anything up
@@ -63,7 +69,7 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
             }
         }
         credentialProvider = AWSCognitoCredentialsProvider(regionType:.USWest2,
-                                                           identityPoolId:"us-west-2:xxxxxxx")
+                                                           identityPoolId:identityPoolId as! String)
         configuration = AWSServiceConfiguration(region:.USWest2, credentialsProvider:credentialProvider)
         AWSServiceManager.default().defaultServiceConfiguration = configuration
         transferManager = AWSS3TransferManager.default()

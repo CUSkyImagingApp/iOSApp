@@ -65,6 +65,7 @@
 		3FF89F7B1ED8D594001F37A0 /* EventTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = EventTableViewCell.swift; path = Controllers/EventTableViewCell.swift; sourceTree = "<group>"; };
 		3FF89F7D1EDA7E43001F37A0 /* PermissionsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PermissionsViewController.swift; path = Controllers/PermissionsViewController.swift; sourceTree = "<group>"; };
 		3FF89F811EDE4CEF001F37A0 /* PermissionsStoryboardSegue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PermissionsStoryboardSegue.swift; path = Controllers/PermissionsStoryboardSegue.swift; sourceTree = "<group>"; };
+		3FFFA50B1EE7A13700221613 /* CitizenSkyView.awskeys.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = CitizenSkyView.awskeys.xcconfig; sourceTree = "<group>"; };
 		4CDC52DA689257D17E081018 /* Pods_CitizenSkyView.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CitizenSkyView.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		79B3309A994AF913712F861F /* Pods-CitizenSkyViewTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CitizenSkyViewTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-CitizenSkyViewTests/Pods-CitizenSkyViewTests.debug.xcconfig"; sourceTree = "<group>"; };
 		B7842480048AD0FD5874A9E0 /* Pods-CitizenSkyView.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CitizenSkyView.release.xcconfig"; path = "Pods/Target Support Files/Pods-CitizenSkyView/Pods-CitizenSkyView.release.xcconfig"; sourceTree = "<group>"; };
@@ -117,6 +118,7 @@
 		3FB1C6651ECA054B008B5C92 = {
 			isa = PBXGroup;
 			children = (
+				3FFFA50B1EE7A13700221613 /* CitizenSkyView.awskeys.xcconfig */,
 				3FB1C6701ECA054B008B5C92 /* CitizenSkyView */,
 				3FB1C6851ECA054B008B5C92 /* CitizenSkyViewTests */,
 				3FB1C6901ECA054B008B5C92 /* CitizenSkyViewUITests */,
@@ -641,7 +643,7 @@
 		};
 		3FB1C6971ECA054B008B5C92 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = EA0EC6BFD1242ED29EB1C48E /* Pods-CitizenSkyView.debug.xcconfig */;
+			baseConfigurationReference = 3FFFA50B1EE7A13700221613 /* CitizenSkyView.awskeys.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = G8P9ZKFQKC;
