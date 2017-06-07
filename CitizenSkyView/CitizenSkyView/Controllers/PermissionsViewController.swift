@@ -16,6 +16,11 @@ class PermissionsViewController : UIViewController, CLLocationManagerDelegate {
     
     var manager : CLLocationManager?
     
+    let noCameraText = "CitizenSkyView needs access to your camera during each event. Without access to the camera CitizenSkyView has no function."
+    let noLocationText = "CitizenSkyView needs your location once during each event. This information allows scientists can stitch image sequences together accurately."
+    let noCameraHead = "Why does CitizenSkyView need my camera?"
+    let noLocationHead = "Why does CitizenSkyView Need my location?"
+    
     
     @IBOutlet weak var message : UILabel!
     @IBOutlet weak var locDetailHeading : UILabel!
@@ -32,15 +37,21 @@ class PermissionsViewController : UIViewController, CLLocationManagerDelegate {
         if !cameraPermission && !locationPermission {
             message.text = "CitizenSkyView needs to access your camera and location information to function. Please enable these in settings"
             locDetailBody.isHidden = false
+            locDetailBody.text = self.noLocationText
             locDetailHeading.isHidden = false
+            locDetailHeading.text = self.noLocationHead
         } else if !cameraPermission {
             message.text = "CitizenSkyView needs to access your camera to function. Please enable these in settings"
-            locDetailBody.isHidden = true
-            locDetailHeading.isHidden = true
+            locDetailBody.isHidden = false
+            locDetailBody.text = self.noCameraText
+            locDetailHeading.isHidden = false
+            locDetailHeading.text = self.noCameraHead
         } else if !locationPermission {
             message.text = "CitizenSkyView needs to access your location information to function. Please enable these in settings."
             locDetailBody.isHidden = false
+            locDetailBody.text = self.noLocationText
             locDetailHeading.isHidden = false
+            locDetailHeading.text = self.noLocationHead
         } else {
             self.performSegue(withIdentifier: "EventSegue", sender: self)
         }
