@@ -53,6 +53,8 @@ class EventTableViewController: UITableViewController {
         initCameraId()
         hasPermissions = askPermission()
         
+        self.navigationController?.navigationBar.tintColor = UIColor(displayP3Red: 0.3, green: 0.3, blue: 0.3, alpha: 1.0)
+        
     }
     
     override func didReceiveMemoryWarning() {
