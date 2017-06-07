@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		3F2B1EB61ECCEA8C00A0A452 /* ImageCaptureViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F2B1EB51ECCEA8C00A0A452 /* ImageCaptureViewController.swift */; };
 		3FB1C6721ECA054B008B5C92 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FB1C6711ECA054B008B5C92 /* AppDelegate.swift */; };
-		3FB1C6741ECA054B008B5C92 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FB1C6731ECA054B008B5C92 /* ViewController.swift */; };
 		3FB1C6771ECA054B008B5C92 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3FB1C6751ECA054B008B5C92 /* Main.storyboard */; };
 		3FB1C6791ECA054B008B5C92 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3FB1C6781ECA054B008B5C92 /* Assets.xcassets */; };
 		3FB1C67C1ECA054B008B5C92 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3FB1C67A1ECA054B008B5C92 /* LaunchScreen.storyboard */; };
@@ -49,7 +48,6 @@
 		3F2B1EB51ECCEA8C00A0A452 /* ImageCaptureViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ImageCaptureViewController.swift; path = Controllers/ImageCaptureViewController.swift; sourceTree = "<group>"; };
 		3FB1C66E1ECA054B008B5C92 /* CitizenSkyView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CitizenSkyView.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3FB1C6711ECA054B008B5C92 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		3FB1C6731ECA054B008B5C92 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		3FB1C6761ECA054B008B5C92 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		3FB1C6781ECA054B008B5C92 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		3FB1C67B1ECA054B008B5C92 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -109,7 +107,6 @@
 				3FF89F7B1ED8D594001F37A0 /* EventTableViewCell.swift */,
 				3FF89F791ED8D3FE001F37A0 /* EventTableViewController.swift */,
 				3FF89F7D1EDA7E43001F37A0 /* PermissionsViewController.swift */,
-				3FB1C6731ECA054B008B5C92 /* ViewController.swift */,
 				3F2B1EB51ECCEA8C00A0A452 /* ImageCaptureViewController.swift */,
 			);
 			name = Controllers;
@@ -487,7 +484,6 @@
 				3FF89F7E1EDA7E43001F37A0 /* PermissionsViewController.swift in Sources */,
 				3FF89F7C1ED8D594001F37A0 /* EventTableViewCell.swift in Sources */,
 				3FF89F821EDE4CEF001F37A0 /* PermissionsStoryboardSegue.swift in Sources */,
-				3FB1C6741ECA054B008B5C92 /* ViewController.swift in Sources */,
 				3FD7A7761ECCAA580074DD99 /* Event.swift in Sources */,
 				3F2B1EB61ECCEA8C00A0A452 /* ImageCaptureViewController.swift in Sources */,
 				3FB1C6721ECA054B008B5C92 /* AppDelegate.swift in Sources */,
@@ -737,7 +733,7 @@
 				3FB1C6951ECA054B008B5C92 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		3FB1C6961ECA054B008B5C92 /* Build configuration list for PBXNativeTarget "CitizenSkyView" */ = {
 			isa = XCConfigurationList;
@@ -746,7 +742,7 @@
 				3FB1C6981ECA054B008B5C92 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		3FB1C6991ECA054B008B5C92 /* Build configuration list for PBXNativeTarget "CitizenSkyViewTests" */ = {
 			isa = XCConfigurationList;
@@ -755,7 +751,7 @@
 				3FB1C69B1ECA054B008B5C92 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		3FB1C69C1ECA054B008B5C92 /* Build configuration list for PBXNativeTarget "CitizenSkyViewUITests" */ = {
 			isa = XCConfigurationList;
@@ -764,7 +760,7 @@
 				3FB1C69E1ECA054B008B5C92 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
 	};

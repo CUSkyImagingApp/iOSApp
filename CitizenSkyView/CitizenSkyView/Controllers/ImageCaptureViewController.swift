@@ -117,13 +117,11 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
                     if let now = self.trueTimeClient?.referenceTime?.now() {
                         if let start = event.startDate, let end = event.endDate {
                             if now > start && now < end {
-                                print("Event Started")
                                 self.timeRemaining.isHidden = true
                                 self.countdownLabel.isHidden = true
                                 self.eventHappening = true
                                 startThirtySecondCapture()
                             } else {
-                                print("Event Starting Soon")
                                 startCountdown()
                                 
                             }
@@ -178,16 +176,25 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
         }
         if let datetime = self.trueTimeClient?.referenceTime?.now(), let start = event.startDate {
             let diff = start.timeIntervalSince(datetime)
-            print(diff)
+
             self.secondsTilStart = diff
             
             //set image capture timer
             self.timer = Timer.scheduledTimer(timeInterval: diff, target: self, selector: (#selector(ImageCaptureViewController.takePicture)), userInfo: nil, repeats: false)
 
+
+            if diff > 86400 {                                   //Number of seconds in 24 hours
+                let days = Int(diff / 86400)
+                self.timeRemaining.text = String(days) + " days"
+            } else {
+                
+                //start countdown timer
+                self.countdownTimer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: (#selector(ImageCaptureViewController.updateCountdown)), userInfo: nil, repeats: true)
+                self.timeRemaining.text = timeString(time: self.secondsTilStart!)
+                self.timeRemaining.sizeToFit()
+                self.timeRemaining.center.x = self.view.center.x
+            }
             
-            //start countdown timer
-            self.countdownTimer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: (#selector(ImageCaptureViewController.updateCountdown)), userInfo: nil, repeats: true)
-            self.timeRemaining.text = timeString(time: self.secondsTilStart!)
         } else {
             print("unable to align time with true time client.")
             //This is acutally a error case now, handle it
