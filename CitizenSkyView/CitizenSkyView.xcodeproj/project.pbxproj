@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		3F2B1EB61ECCEA8C00A0A452 /* ImageCaptureViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F2B1EB51ECCEA8C00A0A452 /* ImageCaptureViewController.swift */; };
+		3F74AA671EEF9B670091E942 /* LaunchScreen in Resources */ = {isa = PBXBuildFile; fileRef = 3F74AA661EEF9B670091E942 /* LaunchScreen */; };
 		3FB1C6721ECA054B008B5C92 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FB1C6711ECA054B008B5C92 /* AppDelegate.swift */; };
 		3FB1C6771ECA054B008B5C92 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3FB1C6751ECA054B008B5C92 /* Main.storyboard */; };
 		3FB1C6791ECA054B008B5C92 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3FB1C6781ECA054B008B5C92 /* Assets.xcassets */; };
@@ -46,6 +47,7 @@
 		36A33E5F02078B3980068DAE /* Pods-CitizenSkyViewUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CitizenSkyViewUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-CitizenSkyViewUITests/Pods-CitizenSkyViewUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		3C148ED2AD39A59B52A39D2A /* Pods_CitizenSkyViewUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CitizenSkyViewUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3F2B1EB51ECCEA8C00A0A452 /* ImageCaptureViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ImageCaptureViewController.swift; path = Controllers/ImageCaptureViewController.swift; sourceTree = "<group>"; };
+		3F74AA661EEF9B670091E942 /* LaunchScreen */ = {isa = PBXFileReference; lastKnownFileType = file; name = LaunchScreen; path = CitizenSkyView/Images/LaunchScreen; sourceTree = "<group>"; };
 		3FB1C66E1ECA054B008B5C92 /* CitizenSkyView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CitizenSkyView.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3FB1C6711ECA054B008B5C92 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3FB1C6761ECA054B008B5C92 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -112,6 +114,15 @@
 			name = Controllers;
 			sourceTree = "<group>";
 		};
+		3F74AA5D1EEF987E0091E942 /* Images */ = {
+			isa = PBXGroup;
+			children = (
+				3F74AA661EEF9B670091E942 /* LaunchScreen */,
+			);
+			name = Images;
+			path = ..;
+			sourceTree = "<group>";
+		};
 		3FB1C6651ECA054B008B5C92 = {
 			isa = PBXGroup;
 			children = (
@@ -141,6 +152,7 @@
 				3F2B1EB41ECCEA1800A0A452 /* Controllers */,
 				3FB1C6711ECA054B008B5C92 /* AppDelegate.swift */,
 				3FB1C6751ECA054B008B5C92 /* Main.storyboard */,
+				3F74AA5D1EEF987E0091E942 /* Images */,
 				3FBA8FA51ECCA97700930C02 /* Models */,
 				3FB1C6781ECA054B008B5C92 /* Assets.xcassets */,
 				3FB1C67A1ECA054B008B5C92 /* LaunchScreen.storyboard */,
@@ -319,6 +331,7 @@
 				3FB1C67C1ECA054B008B5C92 /* LaunchScreen.storyboard in Resources */,
 				3FB1C6791ECA054B008B5C92 /* Assets.xcassets in Resources */,
 				3FB1C6771ECA054B008B5C92 /* Main.storyboard in Resources */,
+				3F74AA671EEF9B670091E942 /* LaunchScreen in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
