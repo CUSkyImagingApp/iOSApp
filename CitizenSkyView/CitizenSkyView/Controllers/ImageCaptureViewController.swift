@@ -35,7 +35,7 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
     var onCoundownSeconds = false
     var secondsTilStart : TimeInterval?
     
-    var manager : CLLocationManager?
+    let manager = CLLocationManager()
     var mostRecentLocation : CLLocation?
     
     var cameraId : String?
@@ -43,6 +43,8 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
     
     var event : Event?
     var eventHappening = false
+    
+    var currentHeading : CLLocationDirection?
     
     
     @IBOutlet weak var timeRemaining : UILabel!
@@ -84,9 +86,15 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
         onThirtySecondTimer = false
         onCoundownSeconds = false
         
-        manager = CLLocationManager()
-        manager?.delegate = self
-        manager?.requestLocation()
+        manager.delegate = self
+        manager.requestLocation()
+        
+        if (CLLocationManager.headingAvailable()) {
+            manager.headingFilter = 1
+            manager.startUpdatingHeading()
+        } else {
+            print("compass data not available")
+        }
         
         if let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
             let path = dir.appendingPathComponent("cameraId.txt")
@@ -279,6 +287,10 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
         if let error = error {
             print("error : \(error.localizedDescription)")
         }
+        guard let compassHeading = self.currentHeading else {
+            print("Error no compass heading")
+            return
+        }
         if let date = self.trueTimeClient?.referenceTime?.now() {
             if  let sampleBuffer = photoSampleBuffer,
                 let previewBuffer = previewPhotoSampleBuffer,
@@ -309,6 +321,8 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
                 metadata["filetype"] = "JPEG"
                 metadata["sizex"] = String(describing: image.size.width)
                 metadata["sizey"] = String(describing: image.size.height)
+                
+                metadata["heading"] = String(describing: compassHeading)
                 
                 if let location = self.mostRecentLocation {
                     metadata["lat"] = String(location.coordinate.latitude)
@@ -358,6 +372,10 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
     }
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print("Error getting location")
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateHeading heading: CLHeading) {
+        self.currentHeading = heading.magneticHeading
     }
     
     func getDocumentsDirectory() -> URL {
