@@ -12,9 +12,9 @@ import AVFoundation
 import CoreLocation
 
 
-class PermissionsViewController : UIViewController, CLLocationManagerDelegate {
+class PermissionsViewController : UIViewController {
     
-    var manager : CLLocationManager?
+    var manager : LocationService?
     
     let noCameraText = "CitizenSkyView needs access to your camera during each event. Without access to the camera CitizenSkyView has no function."
     let noLocationText = "CitizenSkyView needs your location once during each event. This information allows scientists can stitch image sequences together accurately."
@@ -29,8 +29,7 @@ class PermissionsViewController : UIViewController, CLLocationManagerDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        manager = CLLocationManager()
-        manager?.delegate = self
+
         let cameraPermission = askCameraPermission()
         let locationPermission = askLocationPermission()
         
@@ -100,7 +99,7 @@ class PermissionsViewController : UIViewController, CLLocationManagerDelegate {
         case .denied, .restricted:
             hasPermission = false
         case .notDetermined:
-            manager.requestWhenInUseAuthorization()
+            manager.requestLocationPermission()
         }
         return hasPermission
     }

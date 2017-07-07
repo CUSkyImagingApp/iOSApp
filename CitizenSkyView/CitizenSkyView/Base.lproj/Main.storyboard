@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12120" systemVersion="16F73" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="cRQ-yV-SyL">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12121" systemVersion="16F73" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="cRQ-yV-SyL">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12088"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12089"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -52,7 +52,7 @@
                                     <outlet property="eventDate" destination="wnS-N5-OFT" id="TZd-1m-kwv"/>
                                     <outlet property="eventName" destination="Qu9-0r-imq" id="gAY-yI-kCs"/>
                                     <outlet property="eventTime" destination="JG8-G2-FUb" id="NNa-C5-yDh"/>
-                                    <segue destination="t1e-li-Vlu" kind="show" identifier="EventSegue" id="HE2-AQ-Hgy"/>
+                                    <segue destination="bvm-dk-58T" kind="show" identifier="EventSegue" id="XMp-7W-HRQ"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -138,6 +138,51 @@
             </objects>
             <point key="canvasLocation" x="1073" y="452"/>
         </scene>
+        <!--Compass View Controller-->
+        <scene sceneID="dEV-vg-xb3">
+            <objects>
+                <viewController id="bvm-dk-58T" customClass="CompassViewController" customModule="CitizenSkyView" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="Wf5-Kg-pTh"/>
+                        <viewControllerLayoutGuide type="bottom" id="CpQ-Cx-cYW"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="OxT-oB-dAr">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fov-nH-Hv6">
+                                <rect key="frame" x="172" y="580" width="30" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Skip"/>
+                                <connections>
+                                    <segue destination="t1e-li-Vlu" kind="show" identifier="ImageCaptureSegue" id="MV2-MN-lxP"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Place your phone up side down and adjust it's orientation until it starts to buzz. This means your phone is pointed north!" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="6" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9nf-xl-iju">
+                                <rect key="frame" x="16" y="124" width="343" height="178"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="14°" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="i2V-G4-S2h">
+                                <rect key="frame" x="174" y="444" width="26" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <connections>
+                        <outlet property="degreesLabel" destination="i2V-G4-S2h" id="29b-nA-3nX"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="jG1-DT-i0o" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1072.8" y="-243.32833583208398"/>
+        </scene>
         <!--Image Capture View Controller-->
         <scene sceneID="cCX-HM-8u1">
             <objects>
@@ -182,17 +227,20 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="IKq-Qc-zqW" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1072.8" y="-251.42428785607197"/>
+            <point key="canvasLocation" x="2089" y="-243"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="QpZ-5t-dXL">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="cRQ-yV-SyL" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="Hlr-zI-zqi">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="Hlr-zI-zqi">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <color key="barTintColor" red="0.33333333333333331" green="0.72549019607843135" blue="0.90980392156862744" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="barTintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <textAttributes key="titleTextAttributes">
+                            <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        </textAttributes>
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>

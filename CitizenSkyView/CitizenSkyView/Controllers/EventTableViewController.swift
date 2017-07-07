@@ -17,11 +17,12 @@ import CoreLocation
 
 class EventTableViewController: UITableViewController {
     
-    
     var credentialProvider : AWSCognitoCredentialsProvider!
     var configuration : AWSServiceConfiguration!
     var dynamoDBObjectMapper : AWSDynamoDBObjectMapper?
     var trueTimeClient : TrueTimeClient?
+
+    var manager : LocationService?
     
     var hasPermissions = false
     
@@ -46,6 +47,8 @@ class EventTableViewController: UITableViewController {
         trueTimeClient = TrueTimeClient.sharedInstance
         trueTimeClient?.start()
         
+        manager = LocationService()
+        
         let nc = NotificationCenter.default
         nc.addObserver(forName: refreshNotification, object: nil, queue: nil, using: refreshPage)
         
@@ -53,7 +56,7 @@ class EventTableViewController: UITableViewController {
         initCameraId()
         hasPermissions = askPermission()
         
-        self.navigationController?.navigationBar.tintColor = UIColor(displayP3Red: 0.3, green: 0.3, blue: 0.3, alpha: 1.0)
+        self.navigationController?.navigationBar.tintColor = UIColor(displayP3Red: 1, green: 1, blue: 1, alpha: 1.0)
         
     }
     
@@ -113,9 +116,8 @@ class EventTableViewController: UITableViewController {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         super.prepare(for: segue, sender: sender)
-        print("Here")
         if segue.identifier == "EventSegue" {
-            guard let imageCaptureViewController = segue.destination as? ImageCaptureViewController else {
+            guard let compassViewController = segue.destination as? CompassViewController else {
                 fatalError("Unexpected destination: \(segue.destination)")
             }
             guard let selectedEventCell = sender as? EventTableViewCell else {
@@ -125,7 +127,13 @@ class EventTableViewController: UITableViewController {
                 fatalError("The selected cell is not being displayed by the table")
             }
             let selectedEvent = events[indexPath.section][indexPath.row]
-            imageCaptureViewController.event = selectedEvent
+            compassViewController.event = selectedEvent
+            compassViewController.manager = self.manager
+        } else if segue.identifier == "PermissionsSegue" {
+            guard let permissionsViewController = segue.destination as? PermissionsViewController else {
+                fatalError("Expected destination controller: \(segue.destination)")
+            }
+            permissionsViewController.manager = self.manager
         }
 
     }
@@ -197,18 +205,33 @@ class EventTableViewController: UITableViewController {
     
     // This method you can use somewhere you need to know camera permission   state
     func askPermission() -> Bool{
+        guard let manager = self.manager else {
+            fatalError("expected location manager")
+        }
         var hasCameraPermission = false
         var hasLocationPermission = false
         let cameraPermissionStatus =  AVCaptureDevice.authorizationStatus(forMediaType: AVMediaTypeVideo)
         if cameraPermissionStatus == .authorized {
             hasCameraPermission = true
-        } else {
+        } else if cameraPermissionStatus == .notDetermined {
+            AVCaptureDevice.requestAccess(forMediaType: AVMediaTypeVideo, completionHandler: {
+                (granted :Bool) -> Void in
+                if granted == true {
+                    hasCameraPermission = true
+                } else {
+                    hasCameraPermission = false
+                }
+            })
+        }
+        else {
             hasCameraPermission = false
         }
         
         let locationPermissionStatus = CLLocationManager.authorizationStatus()
         if locationPermissionStatus == .authorizedAlways || locationPermissionStatus == .authorizedWhenInUse {
             hasLocationPermission = true
+        } else if locationPermissionStatus == .notDetermined {
+            manager.requestLocationPermission()
         } else {
             hasLocationPermission = false
         }

@@ -7,7 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3F0213391F0054C4007F4318 /* LocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0213381F0054C4007F4318 /* LocationService.swift */; };
 		3F2B1EB61ECCEA8C00A0A452 /* ImageCaptureViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F2B1EB51ECCEA8C00A0A452 /* ImageCaptureViewController.swift */; };
+		3F6A7C481F0DE5CF00A5DB45 /* CompassViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6A7C471F0DE5CF00A5DB45 /* CompassViewController.swift */; };
 		3F74AA671EEF9B670091E942 /* LaunchScreen in Resources */ = {isa = PBXBuildFile; fileRef = 3F74AA661EEF9B670091E942 /* LaunchScreen */; };
 		3FB1C6721ECA054B008B5C92 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FB1C6711ECA054B008B5C92 /* AppDelegate.swift */; };
 		3FB1C6771ECA054B008B5C92 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3FB1C6751ECA054B008B5C92 /* Main.storyboard */; };
@@ -46,7 +48,9 @@
 		261B51955DCD293C4E8B42E9 /* Pods-CitizenSkyViewTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CitizenSkyViewTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-CitizenSkyViewTests/Pods-CitizenSkyViewTests.release.xcconfig"; sourceTree = "<group>"; };
 		36A33E5F02078B3980068DAE /* Pods-CitizenSkyViewUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CitizenSkyViewUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-CitizenSkyViewUITests/Pods-CitizenSkyViewUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		3C148ED2AD39A59B52A39D2A /* Pods_CitizenSkyViewUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CitizenSkyViewUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		3F0213381F0054C4007F4318 /* LocationService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LocationService.swift; path = Services/LocationService.swift; sourceTree = "<group>"; };
 		3F2B1EB51ECCEA8C00A0A452 /* ImageCaptureViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ImageCaptureViewController.swift; path = Controllers/ImageCaptureViewController.swift; sourceTree = "<group>"; };
+		3F6A7C471F0DE5CF00A5DB45 /* CompassViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CompassViewController.swift; path = Controllers/CompassViewController.swift; sourceTree = "<group>"; };
 		3F74AA661EEF9B670091E942 /* LaunchScreen */ = {isa = PBXFileReference; lastKnownFileType = file; name = LaunchScreen; path = CitizenSkyView/Images/LaunchScreen; sourceTree = "<group>"; };
 		3FB1C66E1ECA054B008B5C92 /* CitizenSkyView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CitizenSkyView.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3FB1C6711ECA054B008B5C92 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -102,6 +106,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3F0213371F0054B1007F4318 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				3F0213381F0054C4007F4318 /* LocationService.swift */,
+			);
+			name = Services;
+			sourceTree = "<group>";
+		};
 		3F2B1EB41ECCEA1800A0A452 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
@@ -110,6 +122,7 @@
 				3FF89F791ED8D3FE001F37A0 /* EventTableViewController.swift */,
 				3FF89F7D1EDA7E43001F37A0 /* PermissionsViewController.swift */,
 				3F2B1EB51ECCEA8C00A0A452 /* ImageCaptureViewController.swift */,
+				3F6A7C471F0DE5CF00A5DB45 /* CompassViewController.swift */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -152,6 +165,7 @@
 				3F2B1EB41ECCEA1800A0A452 /* Controllers */,
 				3FB1C6711ECA054B008B5C92 /* AppDelegate.swift */,
 				3FB1C6751ECA054B008B5C92 /* Main.storyboard */,
+				3F0213371F0054B1007F4318 /* Services */,
 				3F74AA5D1EEF987E0091E942 /* Images */,
 				3FBA8FA51ECCA97700930C02 /* Models */,
 				3FB1C6781ECA054B008B5C92 /* Assets.xcassets */,
@@ -494,8 +508,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3F6A7C481F0DE5CF00A5DB45 /* CompassViewController.swift in Sources */,
 				3FF89F7E1EDA7E43001F37A0 /* PermissionsViewController.swift in Sources */,
 				3FF89F7C1ED8D594001F37A0 /* EventTableViewCell.swift in Sources */,
+				3F0213391F0054C4007F4318 /* LocationService.swift in Sources */,
 				3FF89F821EDE4CEF001F37A0 /* PermissionsStoryboardSegue.swift in Sources */,
 				3FD7A7761ECCAA580074DD99 /* Event.swift in Sources */,
 				3F2B1EB61ECCEA8C00A0A452 /* ImageCaptureViewController.swift in Sources */,

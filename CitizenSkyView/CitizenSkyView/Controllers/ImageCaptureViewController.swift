@@ -15,7 +15,7 @@ import TrueTime
 import CoreLocation
 
 
-class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegate, CLLocationManagerDelegate  {
+class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegate  {
     
     
     //MARK: Properties
@@ -35,7 +35,7 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
     var onCoundownSeconds = false
     var secondsTilStart : TimeInterval?
     
-    let manager = CLLocationManager()
+    var manager : LocationService?
     var mostRecentLocation : CLLocation?
     
     var cameraId : String?
@@ -43,8 +43,6 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
     
     var event : Event?
     var eventHappening = false
-    
-    var currentHeading : CLLocationDirection?
     
     
     @IBOutlet weak var timeRemaining : UILabel!
@@ -62,6 +60,9 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
         }
         guard let identityPoolId = dictionary["AWS_COGNITO_IDENTITY"] else{
             fatalError("Found no configuration for AWS_COGNITO_IDENTITY")
+        }
+        guard let manager = self.manager else {
+            fatalError("Expected location manager")
         }
         if let eventKey = event.eventRef {
             if eventKey == 2 {
@@ -86,12 +87,9 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
         onThirtySecondTimer = false
         onCoundownSeconds = false
         
-        manager.delegate = self
-        manager.requestLocation()
         
         if (CLLocationManager.headingAvailable()) {
-            manager.headingFilter = 1
-            manager.startUpdatingHeading()
+            manager.startUpdatingCompassHeading()
         } else {
             print("compass data not available")
         }
@@ -287,8 +285,12 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
         if let error = error {
             print("error : \(error.localizedDescription)")
         }
-        guard let compassHeading = self.currentHeading else {
-            print("Error no compass heading")
+        guard let manager = self.manager else {
+            print("Expected location manager")
+            return
+        }
+        guard let eventName = self.event?.EventName else {
+            print("No valid event name")
             return
         }
         if let date = self.trueTimeClient?.referenceTime?.now() {
@@ -322,7 +324,7 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
                 metadata["sizex"] = String(describing: image.size.width)
                 metadata["sizey"] = String(describing: image.size.height)
                 
-                metadata["heading"] = String(describing: compassHeading)
+                metadata["heading"] = String(describing: manager.getCurrentHeading())
                 
                 if let location = self.mostRecentLocation {
                     metadata["lat"] = String(location.coordinate.latitude)
@@ -335,7 +337,7 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
                 let uploadRequest = AWSS3TransferManagerUploadRequest()
                 uploadRequest?.bucket = "citizenskyview"
                 //Camera id is guarunteed to be not nil
-                uploadRequest?.key = cameraId! + "_" + dateString
+                uploadRequest?.key = eventName + "/" + cameraId! + "_" + dateString
                 uploadRequest?.body = fileName
                 uploadRequest?.metadata = metadata
                 imageNumber += 1
@@ -364,18 +366,6 @@ class ImageCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
         } else {
             print("Could not get reference time from true time client")
         }
-    }
-    
-    //callback from the requestLocation method
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        self.mostRecentLocation = locations.last
-    }
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        print("Error getting location")
-    }
-    
-    func locationManager(_ manager: CLLocationManager, didUpdateHeading heading: CLHeading) {
-        self.currentHeading = heading.magneticHeading
     }
     
     func getDocumentsDirectory() -> URL {
