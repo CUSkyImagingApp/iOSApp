@@ -26,7 +26,7 @@ class CompassViewController: UIViewController {
         guard let man = self.manager else {
             fatalError("Expected location manager")
         }
-        NotificationCenter.default.addObserver(self, selector: #selector(CompassViewController.updateCompassHeading), name: Notification.Name("newHeadingUpdate"), object: nil)
+        addCompassObserver()
         man.requestLocation()
         man.startUpdatingCompassHeading()
     }
@@ -48,11 +48,19 @@ class CompassViewController: UIViewController {
         }
     }
     
+    func addCompassObserver() {
+        NotificationCenter.default.addObserver(self, selector: #selector(CompassViewController.updateCompassHeading), name: Notification.Name("newHeadingUpdate"), object: nil)
+    }
+    
+    func removeCompassObserver() {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
     func updateCompassHeading(notification: NSNotification) {
         guard let heading = notification.object as? CLHeading else {
             fatalError("Not a heading object")
         }
-        if heading.magneticHeading < 5 || heading.magneticHeading > 365 {
+        if heading.magneticHeading < 5 || heading.magneticHeading > 355 {
             headingInRange()
         } else {
             self.numberOfVibrate = 0
@@ -101,5 +109,7 @@ class CompassViewController: UIViewController {
         }
         imageCaptureViewController.manager = man
         imageCaptureViewController.event = event
+        man.stopUpdatingCompassHeading()
+        self.removeCompassObserver()
     }
 }

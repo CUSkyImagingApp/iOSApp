@@ -11,6 +11,8 @@
 		3F2B1EB61ECCEA8C00A0A452 /* ImageCaptureViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F2B1EB51ECCEA8C00A0A452 /* ImageCaptureViewController.swift */; };
 		3F6A7C481F0DE5CF00A5DB45 /* CompassViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6A7C471F0DE5CF00A5DB45 /* CompassViewController.swift */; };
 		3F74AA671EEF9B670091E942 /* LaunchScreen in Resources */ = {isa = PBXBuildFile; fileRef = 3F74AA661EEF9B670091E942 /* LaunchScreen */; };
+		3FA161181F133056009A2840 /* info.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FA161171F133056009A2840 /* info.png */; };
+		3FA1611A1F1331F4009A2840 /* smaller.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FA161191F1331F4009A2840 /* smaller.png */; };
 		3FB1C6721ECA054B008B5C92 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FB1C6711ECA054B008B5C92 /* AppDelegate.swift */; };
 		3FB1C6771ECA054B008B5C92 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3FB1C6751ECA054B008B5C92 /* Main.storyboard */; };
 		3FB1C6791ECA054B008B5C92 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3FB1C6781ECA054B008B5C92 /* Assets.xcassets */; };
@@ -52,6 +54,8 @@
 		3F2B1EB51ECCEA8C00A0A452 /* ImageCaptureViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ImageCaptureViewController.swift; path = Controllers/ImageCaptureViewController.swift; sourceTree = "<group>"; };
 		3F6A7C471F0DE5CF00A5DB45 /* CompassViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CompassViewController.swift; path = Controllers/CompassViewController.swift; sourceTree = "<group>"; };
 		3F74AA661EEF9B670091E942 /* LaunchScreen */ = {isa = PBXFileReference; lastKnownFileType = file; name = LaunchScreen; path = CitizenSkyView/Images/LaunchScreen; sourceTree = "<group>"; };
+		3FA161171F133056009A2840 /* info.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = info.png; path = CitizenSkyView/Images/info.png; sourceTree = "<group>"; };
+		3FA161191F1331F4009A2840 /* smaller.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = smaller.png; path = CitizenSkyView/Images/smaller.png; sourceTree = "<group>"; };
 		3FB1C66E1ECA054B008B5C92 /* CitizenSkyView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CitizenSkyView.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3FB1C6711ECA054B008B5C92 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3FB1C6761ECA054B008B5C92 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -130,6 +134,8 @@
 		3F74AA5D1EEF987E0091E942 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				3FA161191F1331F4009A2840 /* smaller.png */,
+				3FA161171F133056009A2840 /* info.png */,
 				3F74AA661EEF9B670091E942 /* LaunchScreen */,
 			);
 			name = Images;
@@ -342,7 +348,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3FA1611A1F1331F4009A2840 /* smaller.png in Resources */,
 				3FB1C67C1ECA054B008B5C92 /* LaunchScreen.storyboard in Resources */,
+				3FA161181F133056009A2840 /* info.png in Resources */,
 				3FB1C6791ECA054B008B5C92 /* Assets.xcassets in Resources */,
 				3FB1C6771ECA054B008B5C92 /* Main.storyboard in Resources */,
 				3F74AA671EEF9B670091E942 /* LaunchScreen in Resources */,

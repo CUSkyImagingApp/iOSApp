@@ -61,7 +61,13 @@
                             <outlet property="delegate" destination="rt1-ML-3Zc" id="k9k-wR-8Ls"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" id="vn2-yt-XJW"/>
+                    <navigationItem key="navigationItem" id="sHn-sy-X7F">
+                        <barButtonItem key="rightBarButtonItem" image="smaller.png" width="6" id="s2E-wf-gC3">
+                            <connections>
+                                <segue destination="YVx-Ol-sQF" kind="show" id="6Nb-Ao-WDJ"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <segue destination="K6l-9R-kIq" kind="show" identifier="PermissionsSegue" id="FXE-OY-JWd"/>
                     </connections>
@@ -138,6 +144,41 @@
             </objects>
             <point key="canvasLocation" x="1073" y="452"/>
         </scene>
+        <!--View Controller-->
+        <scene sceneID="VJD-xE-YVM">
+            <objects>
+                <viewController id="YVx-Ol-sQF" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="ySK-6K-HAj"/>
+                        <viewControllerLayoutGuide type="bottom" id="ilv-1Q-c5j"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="w84-gq-52E">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="About CitizenSkyView" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6Bb-fn-oUw">
+                                <rect key="frame" x="-1" y="76" width="378" height="54"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="24"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" textAlignment="center" lineBreakMode="wordWrap" numberOfLines="7" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="ALF-g0-wjO">
+                                <rect key="frame" x="16" y="138" width="343" height="171"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <string key="text">CitizenSkyView allows you to help gather images of clouds for NASA scientists. These coordinated events will synchronize image captures all over the city. The images can then be stitched together and provide valuable data for climate scientists.</string>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Q6B-42-1yl" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1064.8" y="-890.10494752623697"/>
+        </scene>
         <!--Compass View Controller-->
         <scene sceneID="dEV-vg-xb3">
             <objects>
@@ -158,9 +199,10 @@
                                     <segue destination="t1e-li-Vlu" kind="show" identifier="ImageCaptureSegue" id="MV2-MN-lxP"/>
                                 </connections>
                             </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Place your phone up side down and adjust it's orientation until it starts to buzz. This means your phone is pointed north!" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="6" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9nf-xl-iju">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="6" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9nf-xl-iju">
                                 <rect key="frame" x="16" y="124" width="343" height="178"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <string key="text">Place your phone up side down and adjust it's orientation until it buzzes 5 times consecutively. This means your phone is pointed north!</string>
                                 <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -252,4 +294,8 @@
             <point key="canvasLocation" x="-884" y="34.632683658170919"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="smaller.png" width="30" height="30"/>
+    </resources>
+    <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
 </document>
